@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Carlos Pereira Atencio">
+  
+
+  <link rel="shortcut icon" href="http://localhost:1313/assets/img/favicon.ico">
+
+  <title>Install Theme In A Jekyll Project - Read The Docs Jekyll Theme</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+  <link rel="stylesheet" href="http://localhost:1313/assets/css/theme.css" />
+  <link rel="stylesheet" href="http://localhost:1313/assets/css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github-gist.min.css" />
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+            <a href="http://localhost:1313" class="icon icon-home"> Read The Docs Jekyll Theme</a>
+          <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="/search.html" method="get">
+    <input type="text" name="q" id="search-query" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+                <ul>
+                    <li class="toctree-l1">
+                        <a class="reference internal" href="http://localhost:1313/">Local Development Index Page</a>
+                    </li>
+                </ul>
+    <p class="caption"><span class="caption-text">docs</span></p>
+                <ul>
+                    <li class="toctree-l1">
+                        <a class="reference internal" href="http://localhost:1313/docs/demo-pages/">Demo Pages Index</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1">
+                        <a class="reference internal" href="http://localhost:1313/docs/configuration/configyml.html">Theme Configuration</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1">
+                        <a class="reference internal" href="http://localhost:1313/docs/quickstart.html">🚀 Quick Start With GitHub Pages</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1">
+                        <a class="reference internal" href="http://localhost:1313/docs/configuration/frontmatter.html">Pages Configuration</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1">
+                        <a class="reference internal" href="http://localhost:1313/docs/demo-pages/test-page.html">Markdown Kitchen Sink Example</a>
+                    </li>
+                </ul><ul>
+  <li class="toctree-l1 current"><a href="#install-theme-in-a-jekyll-project">Install Theme In A Jekyll Project</a>
+    <ul>
+      <li class="toctree-l2"><a href="#edit-your-project-gemfile">Edit your project Gemfile</a></li>
+      <li class="toctree-l2"><a href="#manually-install-gem">Manually install gem</a></li>
+      <li class="toctree-l2"><a href="#local-jekyll-to-test-gh-pages">Local Jekyll to test GH Pages</a></li>
+    </ul>
+  </li>
+</ul>
+
+                <ul>
+                    <li class="toctree-l1">
+                        <a class="reference internal" href="http://localhost:1313/docs/demo-pages/deepersection/test-page.html">A Page In A Deeper Section</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1">
+                        <a class="reference internal" href="http://localhost:1313/docs/faqs.html">What is All This? (FAQs)</a>
+                    </li>
+                </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="http://localhost:1313">Read The Docs Jekyll Theme</a>
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+        <li><a href="http://localhost:1313">Docs</a>&raquo;</li>
+        <li>Docs &raquo;</li>
+        <li>Install Theme In A Jekyll Project</li>
+    <li class="wy-breadcrumbs-aside">
+        <a href="https://github.com/carlosperate/jekyll-theme-rtd/blob/master/docs/jekyll.md" class="icon icon-github" target="_blank"> Edit on GitHub</a>
+    </li>
+  </ul>
+    <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+        <a href="http://localhost:1313/docs/demo-pages/deepersection/test-page.html" class="btn btn-neutral float-right" title="A Page In A Deeper Section">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="http://localhost:1313/docs/demo-pages/test-page.html" class="btn btn-neutral" title="Markdown Kitchen Sink Example"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              <h1 id="install-theme-in-a-jekyll-project">Install Theme In A Jekyll Project</h1>
+
+<p><strong>WARNING!</strong> This theme hasn’t been published as a Gem yet, so while these
+instructions should be correct once it has been published, currently it won’t
+work.</p>
+
+<hr />
+
+<p>You can add this port of the Read The Docs theme to your Jekyll project as
+you would normally do with any other
+<a href="https://jekyllrb.com/docs/themes/">gem-based Jekyll theme</a>.</p>
+
+<p>There are two simple methods to do this:</p>
+
+<ol>
+  <li>Editing your project Gemfile</li>
+  <li>Manually installing the gem</li>
+</ol>
+
+<h2 id="edit-your-project-gemfile">Edit your project Gemfile</h2>
+
+<p>Add this line to your Jekyll site’s <code class="language-plaintext highlighter-rouge">Gemfile</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s2">"jekyll-theme-rtd"</span>
+</code></pre></div></div>
+
+<p>Add this line to your Jekyll site’s <code class="language-plaintext highlighter-rouge">_config.yml</code>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">theme</span><span class="pi">:</span> <span class="s">jekyll-theme-rtd</span>
+</code></pre></div></div>
+
+<p>And then execute:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>bundle
+</code></pre></div></div>
+
+<h2 id="manually-install-gem">Manually install gem</h2>
+
+<p>Or install the gem yourself with:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>gem <span class="nb">install </span>jekyll-theme-rtd
+</code></pre></div></div>
+
+<p>And add this line to your Jekyll site’s <code class="language-plaintext highlighter-rouge">_config.yml</code>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">theme</span><span class="pi">:</span> <span class="s">jekyll-theme-rtd</span>
+</code></pre></div></div>
+
+<h2 id="local-jekyll-to-test-gh-pages">Local Jekyll to test GH Pages</h2>
+
+<p>If you are hosting your website in GH Pages, but testing locally with Jekyll
+you might want to have a look at the official documentation for
+<a href="https://help.github.com/en/github/working-with-github-pages/testing-your-github-pages-site-locally-with-jekyll">Testing your GitHub Pages site locally with Jekyll</a>.</p>
+
+
+            </div>
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="http://localhost:1313/docs/demo-pages/deepersection/test-page.html" class="btn btn-neutral float-right" title="A Page In A Deeper Section">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="http://localhost:1313/docs/demo-pages/test-page.html" class="btn btn-neutral" title="Markdown Kitchen Sink Example"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+    <hr/>
+
+    <div role="contentinfo">
+      <p>
+          © Copyright 2025 Carlos Pereira Atencio.
+      </p>
+    </div>
+    Built with
+    <a href="https://jekyllrb.com" target="_blank">Jekyll</a>
+    using a <a href="https://github.com/carlosperate/jekyll-theme-rtd" target="_blank">theme</a>
+    based on <a href="https://sphinx-rtd-theme.readthedocs.io" target="_blank">Read the Docs</a>.
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <a href="https://github.com/carlosperate/jekyll-theme-rtd" class="fa fa-github" target="_blank" style="float: left; color: #fcfcfc"> GitHub</a>
+        <span><a href="http://localhost:1313/docs/demo-pages/test-page.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span style="margin-left: 15px"><a href="http://localhost:1313/docs/demo-pages/deepersection/test-page.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    </span>
+</div>
+
+
+  <script>var base_url = '';</script>
+  <script src="http://localhost:1313/assets/js/jquery-2.1.1.min.js" defer></script>
+  <script src="http://localhost:1313/assets/js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="http://localhost:1313/assets/js/theme.js" defer></script>
+  <script type="text/javascript" defer>
+    hljs.initHighlightingOnLoad();
+    window.addEventListener('load', function() {
+      SphinxRtdTheme.Navigation.enable(true);
+    });
+  </script>
+  <!-- Build Date: 2025-11-02 22:35 -->
+</body>
+</html>
