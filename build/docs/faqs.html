@@ -11,7 +11,7 @@
 
   <link rel="shortcut icon" href="http://localhost:1313/assets/img/favicon.ico">
 
-  <title>Search - Read The Docs Jekyll Theme</title>
+  <title>What is All This? (FAQs) - Read The Docs Jekyll Theme</title>
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
   <link rel="stylesheet" href="http://localhost:1313/assets/css/theme.css" />
@@ -76,12 +76,19 @@
                     <li class="toctree-l1">
                         <a class="reference internal" href="http://localhost:1313/docs/demo-pages/deepersection/test-page.html">A Page In A Deeper Section</a>
                     </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1">
-                        <a class="reference internal" href="http://localhost:1313/docs/faqs.html">What is All This? (FAQs)</a>
-                    </li>
-                </ul>
+                </ul><ul>
+  <li class="toctree-l1 current"><a href="#what-is-all-this-faqs">What is All This? (FAQs)</a>
+    <ul>
+      <li class="toctree-l2"><a href="#what-is-jekyll-read-the-docs-github-pages-or-why-do-i-need-to-know-any-of-this">What is Jekyll, Read The Docs, GitHub Pages or why do I need to know any of this?</a>
+        <ul>
+          <li class="toctree-l3"><a href="#so">So…?</a></li>
+        </ul>
+      </li>
+      <li class="toctree-l2"><a href="#other-faqs">Other FAQs</a></li>
+    </ul>
+  </li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -96,102 +103,84 @@
           <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
         <li><a href="http://localhost:1313">Docs</a>&raquo;</li>
-        <li>Search</li>
+        <li>Docs &raquo;</li>
+        <li>What is All This? (FAQs)</li>
     <li class="wy-breadcrumbs-aside">
+        <a href="https://github.com/carlosperate/jekyll-theme-rtd/blob/master/docs/faqs.md" class="icon icon-github" target="_blank"> Edit on GitHub</a>
     </li>
   </ul>
+    <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+        <a href="http://localhost:1313/docs/demo-pages/deepersection/test-page.html" class="btn btn-neutral" title="A Page In A Deeper Section"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
 
   <hr/>
 </div>
 
           <div role="main">
             <div class="section">
-                <h1 id="search">Search Results</h1>
+              <h1 id="what-is-all-this-faqs">What is All This? (FAQs)</h1>
 
-  <div id="search-results" class="search-results">
-    Enter a search query in the search box on the left.
-  </div>
+<h2 id="what-is-jekyll-read-the-docs-github-pages-or-why-do-i-need-to-know-any-of-this">What is Jekyll, Read The Docs, GitHub Pages or why do I need to know any of this?</h2>
 
-  <!-- We only need to load the search dependencies in this page. -->
-  <script src="https://unpkg.com/lunr/lunr.js"></script>
-  <script type="text/javascript">
-    "use strict";
+<p>Well, you don’t! For a quick walkthrough to get your docs up an running with
+this theme see the <a href="quickstart.html">Quick Start Guide</a>.</p>
 
-    // First we figure out if there is a search query and show a "searching..." animation
-    var getQueryVariable = function(variable) {
-      var query = window.location.search.substring(1);
-      var vars = query.split('&');
-      for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split('=');
-        if (pair[0] === variable) {
-          return decodeURIComponent(pair[1].replace(/\+/g, '%20'));
-        }
-      }
-    };
-    var searchResults = document.getElementById('search-results');
-    var searchQuery = getQueryVariable('q');
-    var dotAnimation = null;
-    if (searchQuery) {
-      document.getElementById('search-query').setAttribute('value', searchQuery);
-      var dotsCount = 0;
-      dotAnimation = setInterval(function() {
-        dotsCount++;
-        var dots = new Array(dotsCount % 5).join('.');
-        searchResults.innerHTML = '<li>Searching' + dots + '</li>';
-      }, 500);
-    }
+<p>If you are interested to know more about all this continue reading :)</p>
 
-    // Then we perform the search on page load
-    window.addEventListener('load', function() {
-      var displaySearchResults = function(results, store) {
-        clearInterval(dotAnimation);
-        if (results.length) {
-          var appendString = '';
-          for (var i = 0; i < results.length; i++) {
-            var item = store[results[i].ref];
-            appendString += '<li><a href="' + item.url + '"><h3>' + item.title + '</h3></a>';
-            appendString += '<p>' + item.content.substring(0, 150) + '...</p></li>';
-          }
-          searchResults.innerHTML = appendString;
-        } else {
-          searchResults.innerHTML = '<li>Your search did not match any documents. Please make sure that all words are spelled correctly and that you\'ve selected enough categories.</li>';
-        }
-      };
+<ul>
+  <li><a href="https://jekyllrb.com/">Jekyll</a> is a static site generator, you give it some
+markdown files, select a theme, and it builds a static website.</li>
+</ul>
 
-      if (searchQuery) {
-        var idx = lunr(function() {
-          this.field('id');
-          this.field('title', { boost: 10 });
-          this.field('author');
-          this.field('content');
-        });
-        $.getJSON('/search_data.json').then(function(search_data) {
-          var idx = lunr(function() {
-            this.field('id');
-            this.field('title', { boost: 10 });
-            this.field('author');
-            this.field('content');
+<p>But you still need to find a way to host it, and that’s where GitHub Pages
+enters the game.</p>
 
-            for (var key in search_data) {
-              this.add({
-                'id': key,
-                'title': search_data[key].title,
-                'author': search_data[key].author,
-                'content': search_data[key].content
-              });
-            }
-          });
+<ul>
+  <li><a href="https://pages.github.com">GitHub Pages</a> is a service from
+<a href="https://github.com">GitHub</a> that allows you to easily build and host a website
+from a GitHub repository.</li>
+</ul>
 
-          var results = idx.search(searchQuery);
-          displaySearchResults(results, search_data);
-        });
-      }
-    });
-  </script>
+<p>There are a couple of different ways to configure GitHub pages, the easiest
+would be to create a <code class="language-plaintext highlighter-rouge">docs</code> folder, add some markdown files, and with a couple
+of clicks
+<a href="https://help.github.com/en/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">configure GitHub Pages</a>
+to automatically build and publish a website for your project!</p>
+
+<p>GitHub Pages uses Jekyll underneath, so a GitHub Pages theme is a Jekyll theme.</p>
+
+<ul>
+  <li><a href="https://readthedocs.org/">Read The Docs</a> is service offering free hosting
+for project documentation. It’s very flexible, but the easiest way to use
+it is with <a href="https://www.sphinx-doc.org/">Sphinx</a>. Similarly to Jekyll, Sphinx
+is also a static site generator, but focused on project documentation, and Read
+The Docs provides a really nice theme for it.</li>
+</ul>
+
+<p>I love the
+<a href="https://sphinx-rtd-theme.readthedocs.io">Read The Docs theme for Sphinx</a>, but
+you still have to set up a Sphinx project, a Read The Docs account, and
+configure the integration to automatically publish your documentation from
+your GitHub repository.</p>
+
+<h3 id="so">So…?</h3>
+
+<p>For a project that is already in GitHub nothing beats the simplicity of GitHub
+Pages, and so this theme is a port of Read The Docs Sphinx theme to Jekyll, so
+that it can be easily used with GitHub Pages.</p>
+
+<h2 id="other-faqs">Other FAQs</h2>
+
+<p>We don’t have Frequently Asked Questions yet, if you have any please
+<a href="https://github.com/carlosperate/jekyll-theme-rtd/issues/new">open a new issue in the theme GitHub repository</a>.</p>
+
 
             </div>
           </div>
           <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="http://localhost:1313/docs/demo-pages/deepersection/test-page.html" class="btn btn-neutral" title="A Page In A Deeper Section"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
 
     <hr/>
 
@@ -216,6 +205,7 @@
   <div class="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <a href="https://github.com/carlosperate/jekyll-theme-rtd" class="fa fa-github" target="_blank" style="float: left; color: #fcfcfc"> GitHub</a>
+        <span><a href="http://localhost:1313/docs/demo-pages/deepersection/test-page.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
     </span>
 </div>
 
@@ -231,6 +221,6 @@
       SphinxRtdTheme.Navigation.enable(true);
     });
   </script>
-  <!-- Build Date: 2025-11-02 22:35 -->
+  <!-- Build Date: 2025-11-02 23:24 -->
 </body>
 </html>

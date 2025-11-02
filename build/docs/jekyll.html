@@ -11,7 +11,7 @@
 
   <link rel="shortcut icon" href="http://localhost:1313/assets/img/favicon.ico">
 
-  <title>🚀 Quick Start With GitHub Pages - Read The Docs Jekyll Theme</title>
+  <title>Install Theme In A Jekyll Project - Read The Docs Jekyll Theme</title>
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
   <link rel="stylesheet" href="http://localhost:1313/assets/css/theme.css" />
@@ -51,10 +51,12 @@
                     <li class="toctree-l1">
                         <a class="reference internal" href="http://localhost:1313/docs/configuration/configyml.html">Theme Configuration</a>
                     </li>
-                </ul><ul>
-  <li class="toctree-l1 current"><a href="#-quick-start-with-github-pages">🚀 Quick Start With GitHub Pages</a></li>
-</ul>
-
+                </ul>
+                <ul>
+                    <li class="toctree-l1">
+                        <a class="reference internal" href="http://localhost:1313/docs/quickstart.html">🚀 Quick Start With GitHub Pages</a>
+                    </li>
+                </ul>
                 <ul>
                     <li class="toctree-l1">
                         <a class="reference internal" href="http://localhost:1313/docs/configuration/frontmatter.html">Pages Configuration</a>
@@ -64,12 +66,16 @@
                     <li class="toctree-l1">
                         <a class="reference internal" href="http://localhost:1313/docs/demo-pages/test-page.html">Markdown Kitchen Sink Example</a>
                     </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1">
-                        <a class="reference internal" href="http://localhost:1313/docs/jekyll.html">Install Theme In A Jekyll Project</a>
-                    </li>
-                </ul>
+                </ul><ul>
+  <li class="toctree-l1 current"><a href="#install-theme-in-a-jekyll-project">Install Theme In A Jekyll Project</a>
+    <ul>
+      <li class="toctree-l2"><a href="#edit-your-project-gemfile">Edit your project Gemfile</a></li>
+      <li class="toctree-l2"><a href="#manually-install-gem">Manually install gem</a></li>
+      <li class="toctree-l2"><a href="#local-jekyll-to-test-gh-pages">Local Jekyll to test GH Pages</a></li>
+    </ul>
+  </li>
+</ul>
+
                 <ul>
                     <li class="toctree-l1">
                         <a class="reference internal" href="http://localhost:1313/docs/demo-pages/deepersection/test-page.html">A Page In A Deeper Section</a>
@@ -95,14 +101,14 @@
   <ul class="wy-breadcrumbs">
         <li><a href="http://localhost:1313">Docs</a>&raquo;</li>
         <li>Docs &raquo;</li>
-        <li>🚀 Quick Start With GitHub Pages</li>
+        <li>Install Theme In A Jekyll Project</li>
     <li class="wy-breadcrumbs-aside">
-        <a href="https://github.com/carlosperate/jekyll-theme-rtd/blob/master/docs/quickstart.md" class="icon icon-github" target="_blank"> Edit on GitHub</a>
+        <a href="https://github.com/carlosperate/jekyll-theme-rtd/blob/master/docs/jekyll.md" class="icon icon-github" target="_blank"> Edit on GitHub</a>
     </li>
   </ul>
     <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
-        <a href="http://localhost:1313/docs/configuration/frontmatter.html" class="btn btn-neutral float-right" title="Pages Configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
-        <a href="http://localhost:1313/docs/configuration/configyml.html" class="btn btn-neutral" title="Theme Configuration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="http://localhost:1313/docs/demo-pages/deepersection/test-page.html" class="btn btn-neutral float-right" title="A Page In A Deeper Section">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="http://localhost:1313/docs/demo-pages/test-page.html" class="btn btn-neutral" title="Markdown Kitchen Sink Example"><span class="icon icon-circle-arrow-left"></span> Previous</a>
     </div>
 
   <hr/>
@@ -110,40 +116,67 @@
 
           <div role="main">
             <div class="section">
-              <h1 id="-quick-start-with-github-pages">🚀 Quick Start With GitHub Pages</h1>
+              <h1 id="install-theme-in-a-jekyll-project">Install Theme In A Jekyll Project</h1>
 
-<p>There are several ways to configure the
-<a href="https://help.github.com/en/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">GitHub Pages publishing source</a>,
-I would recommend to use the <code class="language-plaintext highlighter-rouge">docs</code> folder option, as you can keep source code
-and documentation together in the master branch.</p>
+<p><strong>WARNING!</strong> This theme hasn’t been published as a Gem yet, so while these
+instructions should be correct once it has been published, currently it won’t
+work.</p>
 
-<p>With that in mind, there are only three steps required to get your docs up an
-running with this theme:</p>
+<hr />
+
+<p>You can add this port of the Read The Docs theme to your Jekyll project as
+you would normally do with any other
+<a href="https://jekyllrb.com/docs/themes/">gem-based Jekyll theme</a>.</p>
+
+<p>There are two simple methods to do this:</p>
 
 <ol>
-  <li>Add your documentation markdown files into a docs folder at the root of your
-  repository.</li>
-  <li>Add to the docs folder a <code class="language-plaintext highlighter-rouge">_config.yml</code> file with this line:<br />
-  <code class="language-plaintext highlighter-rouge">remote_theme: carlosperate/jekyll-theme-rtd</code></li>
-  <li>Select your publishing source in the GitHub repository settings as indicated
-  in <a href="https://help.github.com/en/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">the official documentation</a>.</li>
+  <li>Editing your project Gemfile</li>
+  <li>Manually installing the gem</li>
 </ol>
 
-<p>And that’s it!</p>
+<h2 id="edit-your-project-gemfile">Edit your project Gemfile</h2>
 
-<p><img src="assets/img/quick-start-steps.png" alt="steps screenshot" /></p>
+<p>Add this line to your Jekyll site’s <code class="language-plaintext highlighter-rouge">Gemfile</code>:</p>
 
-<p>There are more configuration options explained in the rest of this theme
-documentation, or if you prefer it you can have a look at the
-<a href="https://github.com/carlosperate/jekyll-theme-rtd/blob/master/docs/_config.yml">_config.yml file used to generate this website</a>.</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s2">"jekyll-theme-rtd"</span>
+</code></pre></div></div>
+
+<p>Add this line to your Jekyll site’s <code class="language-plaintext highlighter-rouge">_config.yml</code>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">theme</span><span class="pi">:</span> <span class="s">jekyll-theme-rtd</span>
+</code></pre></div></div>
+
+<p>And then execute:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>bundle
+</code></pre></div></div>
+
+<h2 id="manually-install-gem">Manually install gem</h2>
+
+<p>Or install the gem yourself with:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>gem <span class="nb">install </span>jekyll-theme-rtd
+</code></pre></div></div>
+
+<p>And add this line to your Jekyll site’s <code class="language-plaintext highlighter-rouge">_config.yml</code>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">theme</span><span class="pi">:</span> <span class="s">jekyll-theme-rtd</span>
+</code></pre></div></div>
+
+<h2 id="local-jekyll-to-test-gh-pages">Local Jekyll to test GH Pages</h2>
+
+<p>If you are hosting your website in GH Pages, but testing locally with Jekyll
+you might want to have a look at the official documentation for
+<a href="https://help.github.com/en/github/working-with-github-pages/testing-your-github-pages-site-locally-with-jekyll">Testing your GitHub Pages site locally with Jekyll</a>.</p>
 
 
             </div>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="http://localhost:1313/docs/configuration/frontmatter.html" class="btn btn-neutral float-right" title="Pages Configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
-        <a href="http://localhost:1313/docs/configuration/configyml.html" class="btn btn-neutral" title="Theme Configuration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="http://localhost:1313/docs/demo-pages/deepersection/test-page.html" class="btn btn-neutral float-right" title="A Page In A Deeper Section">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="http://localhost:1313/docs/demo-pages/test-page.html" class="btn btn-neutral" title="Markdown Kitchen Sink Example"><span class="icon icon-circle-arrow-left"></span> Previous</a>
     </div>
 
     <hr/>
@@ -169,8 +202,8 @@ documentation, or if you prefer it you can have a look at the
   <div class="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <a href="https://github.com/carlosperate/jekyll-theme-rtd" class="fa fa-github" target="_blank" style="float: left; color: #fcfcfc"> GitHub</a>
-        <span><a href="http://localhost:1313/docs/configuration/configyml.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
-        <span style="margin-left: 15px"><a href="http://localhost:1313/docs/configuration/frontmatter.html" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span><a href="http://localhost:1313/docs/demo-pages/test-page.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span style="margin-left: 15px"><a href="http://localhost:1313/docs/demo-pages/deepersection/test-page.html" style="color: #fcfcfc">Next &raquo;</a></span>
     </span>
 </div>
 
@@ -186,6 +219,6 @@ documentation, or if you prefer it you can have a look at the
       SphinxRtdTheme.Navigation.enable(true);
     });
   </script>
-  <!-- Build Date: 2025-11-02 22:35 -->
+  <!-- Build Date: 2025-11-02 23:24 -->
 </body>
 </html>
