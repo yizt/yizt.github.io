@@ -15,6 +15,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "bigdecimal"
   spec.add_runtime_dependency "rexml"
   spec.add_runtime_dependency "jekyll" , "~> 3.10.0"
+  spec.add_runtime_dependency "kramdown-math-katex"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"

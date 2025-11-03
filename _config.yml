@@ -18,3 +18,23 @@ hljs_style: github-gist
 
 destination: ./build
 
+markdown: kramdown
+kramdown:
+  input: GFM
+  math_engine: mathjax
+
+giscus:
+  enable: true
+  repo: yizt/discussions # <your-github-user-name>/<your-github-repo-name>
+  repo_id: R_kgDOQNTuVA # leave empty or specify your repo_id (see https://giscus.app/)
+  category: Announcements # name of the category under which discussions will be created
+  category_id: DIC_kwDOQNTuVM4CxVOc # leave empty or specify your category_id (see https://giscus.app/)
+  mapping: pathname # identify discussions by post title
+  strict: 1 # use strict identification mode
+  reactions_enabled: 1 # enable (1) or disable (0) emoji reactions
+  input_position: top # whether to display input form below (bottom) or above (top) the comments
+  dark_theme: dark # name of the dark color scheme (preferred works well with al-folio dark mode)
+  light_theme: light # name of the light color scheme (preferred works well with al-folio light mode)
+  emit_metadata: 0
+  lang: zh-CN
+
