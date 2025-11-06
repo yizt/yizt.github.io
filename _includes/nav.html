@@ -50,6 +50,17 @@
 {%- endfor %}
 
 {%- assign sections = sections | split: "|" | uniq | sort %}
+{%- assign manual_order = "docs,math,dm" | split: "," %}
+{%- assign sorted_sections = "" | split: "" %}
+
+{%- comment -%} 按手动顺序添加 {%- endcomment -%}
+{%- for ordered_section in manual_order %}
+    {%- if sections contains ordered_section %}
+        {%- assign sorted_sections = sorted_sections | push: ordered_section %}
+    {%- endif %}
+{%- endfor %}
+{%- assign sections = sorted_sections %}
+
 {%- for section in sections %}
     <p class="caption"><span class="caption-text">{{ section }}</span></p>
     {%- for nav_item in nav %}
