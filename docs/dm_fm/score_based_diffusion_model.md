@@ -1,11 +1,6 @@
 
-
-<!--
- * @Author: yizuotian
- * @Date: 2025-11-06 09:27:31
- * @LastEditors: yizuotian
- * @LastEditTime: 2025-11-06 09:27:32
- * @FilePath: /yizt.github.io/docs/dm_fm/sde.md
- * @Description: Do edit!
--->
-
+---
+layout: default
+title: 基于得分的扩散模型
+# nav_order: 3
+---
