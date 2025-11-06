@@ -1,6 +1,5 @@
-
 ---
 layout: default
 title: 基于得分的扩散模型
-# nav_order: 3
+nav_exclude: true
 ---
