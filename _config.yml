@@ -23,8 +23,8 @@ kramdown:
   input: GFM
   math_engine: mathjax
   math_engine_opts:
-  preview: false     # 禁用公式预览（避免额外标签）
-  snippet: false      # 禁用代码片段模式
+    preview: false     # 禁用公式预览（避免额外标签）
+    snippet: false      # 禁用代码片段模式
 
 giscus:
   enable: true
