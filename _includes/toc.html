@@ -1,4 +1,4 @@
-<script type="text/x-mathjax-config">
+<!-- <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
     tex2jax: {
       skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
@@ -7,6 +7,23 @@
       processEscapes: true
     }
   });
+</script> -->
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      tags: 'ams',
+      macros: {
+        RR: '{\\bf R}',
+        bold: ['{\\bf #1}', 1],
+        KL: ['D_\\textrm{KL}\\left ( #1 \\| #2 \\right )', 2],
+        EE: ['{\\mathbb{E}_{#1} \\left [ #2 \\right ]}', 2],
+        scalemath: ['{\\scalebox{#1}{\\mbox{\\ensuremath{\\displaystyle #2}}}}', 2],
+        argmin: ['\\operatorname*{\\arg\\min}'],
+        ind: '{\\perp\\!\\!\\!\\!\\perp}'
+      }
+    }
+  };
 </script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
 
