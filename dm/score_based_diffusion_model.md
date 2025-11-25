@@ -5,7 +5,7 @@ nav_exclude: true
 ---
 
 
-
+# 基于得分的扩散模型
 
 
 

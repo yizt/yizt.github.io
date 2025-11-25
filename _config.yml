@@ -1,4 +1,4 @@
-title: Read The Docs Jekyll Theme
+title: 天哥的算法笔记
 description: Port of the Read the Docs theme to Jekyll to use with GitHub Pages.
 
 # Development server config, needed to load some of the content
@@ -8,7 +8,7 @@ webrick:
 
 # Theme settings
 site_author: Carlos Pereira Atencio
-repo_url: 'https://github.com/carlosperate/jekyll-theme-rtd'
+repo_url: 'https://github.com/yizt/yizt.github.io'
 edit_on_github: true
 github_docs_folder: false
 sticky_navigation: true

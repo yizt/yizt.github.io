@@ -1,5 +1,7 @@
 ---
 layout: default
-title: 扩散模型中强化学习
+title: 基于扩散模型的强化学习
 nav_order: 3
 ---
+
+# 基于扩散模型的强化学习
