@@ -50,7 +50,7 @@
 {%- endfor %}
 
 {%- assign sections = sections | split: "|" | uniq | sort %}
-{%- assign manual_order = "docs,math,dm" | split: "," %}
+{%- assign manual_order = "docs,math,dm,rl" | split: "," %}
 {%- assign sorted_sections = "" | split: "" %}
 
 {%- comment -%} 按手动顺序添加 {%- endcomment -%}

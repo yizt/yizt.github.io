@@ -62,3 +62,19 @@ $$
 $$
 
 ## 福克-普朗克方程（Fokker-Planck Equation, FPE）
+
+
+## 指数积分器Exponential integrators
+
+### 刚性微分方程系统（Stiff Differential Equation 
+System）是数值求解中一类具有特殊挑战性的常微分方程（ODE）或偏微分方程（PDE）系统，其核心特征在于不同时间尺度或空间尺度的剧烈分离，导致传统数值方法（如显式欧拉法）在常规步长下可能失效。
+
+**定义与数学本质**
+- **形式定义**：若系统在部分区域对步长 $h$ 极端敏感（需极小 $h$ 才能稳定），而其他区域允许较大 $h$，则称该系统为刚性系统。例如，线性系统 $\mathbf{y}' = A\mathbf{y}$ 中，若矩阵 $A$ 的特征值 $\lambda_i$ 满足 $\max|\text{Re}(\lambda_i)| \gg \min|\text{Re}(\lambda_i)|$（实部差异巨大），则系统刚性显著。
+- **物理本质**：系统内存在**快变分量**（瞬态衰减极快）与**慢变分量**（长期演化）的强耦合。例如，化学反应中快速建立的平衡与缓慢的浓度变化共存。
+
+### 杜哈梅尔原理 (Duhamel's principle)
+
+### Girsanov定理（Girsanov's Theorem）
+
+
