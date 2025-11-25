@@ -13,7 +13,7 @@ nav_order: 3
 ### 得分定义
 一个概率分布的得分函数是其对数概率密度关于数据的梯度
 $$
- \boldsymbol{S}(\boldsymbol{x} ;\boldsymbol{\theta})=\left(\begin{array}{c}
+\boldsymbol{S}(\boldsymbol{x} ;\boldsymbol{\theta})=\left(\begin{array}{c}
 \frac{\partial\log p(\boldsymbol{x} ;\boldsymbol{\theta})}{\partial x_{1}}\\
 \vdots\\
 \frac{\partial\log p(\boldsymbol{x} ;\boldsymbol{\theta})}{\partial x_{n}}
@@ -51,7 +51,7 @@ J(\boldsymbol{\theta}) & = \frac{1}{2}\int_{\mathbb{R}^{n}} p_{\mathrm{d}}(\bold
 $$
 
 ### 采样方式
-给定得分函数$\boldsymbol{S}(\boldsymbol{x} ;\boldsymbol{\theta})=\nabla_{\boldsymbol{x}}\log p(\boldsymbol{x} ;\boldsymbol{\theta})$后可以通过朗之万动力学采样。  
+给定得分函数$\boldsymbol{S}(\boldsymbol{x};\boldsymbol{\theta})=\nabla_{\boldsymbol{x}}\log p(\boldsymbol{x};\boldsymbol{\theta})$后可以通过朗之万动力学采样。  
 <span style="color: red;">为什么朗之万动力学可以采样得分函数？</span>  
 由连续性方程与福克普朗克方程等价关系可知，对于速度场为0的ODE其等价的SDE方程为：
 $$
