@@ -33,26 +33,34 @@ $$
 1. **概率密度的连续性方程**：
   在确定性流中，概率密度$p_t(\psi_t(x))$ 满足连续性方程（无扩散项）：  
 $$
+\begin{equation*}
    \frac{\partial p_t(\psi_t(x))}{\partial t} = - \nabla \cdot (p_t(\psi_t(x)) v(t, \psi_t(x)))
+\end{equation*}
 $$  
   这里，$\nabla \cdot$ 表示散度算子。
 
 2. **沿轨迹的概率密度变化**：
    概率密度$p_t(\psi_t(x))$。这是一个复合函数，其对时间 t 的全导数为：
 $$
-   \begin{align*}
+\begin{equation*}
+   \begin{aligned}
     \frac{d}{dt} p_t(\psi_t(x)) &= \frac{\partial p_t}{\partial {d \psi_t(x)}} \cdot \frac{d \psi_t(x)}{dt} \\
     &= \nabla p_t \cdot v \\ 
     &=- p_t \nabla \cdot v \ \ \ \ //分部积分 
-    \end{align*}
+    \end{aligned}
+\end{equation*}
 $$  
 
 3. **对数概率密度的变化**：
    现在计算对数概率密度的导数：  
 $$
-\begin{align*}
-   \frac{d}{dt} \ln p_t(\psi_t(x)) = \frac{1}{p_t(\psi_t(x))} \frac{d}{dt} p_t(\psi_t(x)) = - \nabla \cdot v(t, \psi_t(x))
-\end{align*}
+\begin{equation*}
+\begin{aligned}
+   \frac{d}{dt} \ln p_t(\psi_t(x)) &= \frac{1}{p_t(\psi_t(x))}  \frac{d}{dt} p_t(\psi_t(x)) \\ 
+   &= \frac{1}{-p_t} - p_t \nabla \cdot v(t, \psi_t(x)) \ \ \ //连续性方程定义\\
+   &= - \nabla \cdot v(t, \psi_t(x))
+\end{aligned}
+\end{equation*}
 $$  
 
 4. **积分从时间 0 到 1**：
