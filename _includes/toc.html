@@ -9,10 +9,17 @@
   });
 </script> -->
 <script>
-  window.MathJax = {
+  MathJax = {
     tex: {
       displayAlign: 'center',  // 水平居中
-      displayIndent: '0',       // 缩进量
+      displayIndent: '0'       // 缩进量
+    },
+    svg: {
+      fontCache: 'global'     // 优化字体缓存
+    }
+  };
+  window.MathJax = {
+    tex: {
       inlineMath: [['$', '$'], ['\\(', '\\)']],
       tags: 'ams',
       macros: {
