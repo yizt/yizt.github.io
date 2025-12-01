@@ -3,5 +3,4 @@
 source "https://rubygems.org"
 gem "csv"
 gem "rexml"
-gem "jekyll-katex"
 gemspec
