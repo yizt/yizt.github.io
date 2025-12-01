@@ -56,11 +56,10 @@ $$
 4. **积分从时间 0 到 1**：
    对上述方程从 `t=0` 到 `t=1` 积分：  
 $$
-   \int_0^1 \frac{d}{dt} \ln p_t(\psi_t(x)) \, dt = \int_0^1 - \nabla \cdot v(t, \psi_t(x)) \, dt
-$$  
-   左边积分是：  
-$$
+\begin{align*}
+   \int_0^1 \frac{d}{dt} \ln p_t(\psi_t(x)) \, dt = \int_0^1 - \nabla \cdot v(t, \psi_t(x)) \, dt \\ 
    \ln p_1(\psi_1(x)) - \ln p_0(\psi_0(x)) = - \int_0^1 \nabla \cdot v(t, \psi_t(x)) \, dt
+\end{align*}   
 $$  
    因此，最终得到：  
 $$
@@ -76,8 +75,8 @@ $$
 ### 中间动作的确定性
   由于流匹配是ODE建模的，因此每一步都是确定性定，满足如下方程:  
 $$
-p(X_{t+\Delta t} = x|X_t) = \delta(x - X_t - v_\theta(t,X_t))\Delta t
-$$ 
+p(X_{t+\Delta t} = x|X_t) = \delta(x - X_t - v_\theta(t,X_t)\Delta t)
+$$  
 
 ### ReinFlow算法
 
