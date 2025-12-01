@@ -28,6 +28,8 @@ kramdown:
   # math_engine: katex
   math_engine_opts:
     auto_render: true  # 自动渲染Markdown中的公式
+  syntax_highlighter_opts:
+    disable: true # 禁用可能与MathJax冲突的语法高亮器
 
 
 giscus:
