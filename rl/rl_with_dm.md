@@ -36,7 +36,7 @@ $$
 \begin{equation*}
    \frac{\partial p_t(\psi_t(x))}{\partial t} = - \nabla \cdot (p_t(\psi_t(x)) v(t, \psi_t(x)))
 \end{equation*}
-$$  
+$$
   这里，$\nabla \cdot$ 表示散度算子。
 
 2. **沿轨迹的概率密度变化**：
@@ -72,13 +72,13 @@ $$
    \ln p_1(\psi_1(x)) - \ln p_0(\psi_0(x)) = - \int_0^1 \nabla \cdot v(t, \psi_t(x)) \, dt
 \end{aligned}
 \end{equation*}   
-$$  
+$$
    因此，最终得到：  
 $$
 \begin{equation}
    \ln p_1(\psi_1(x)) = \ln p_0(\psi_0(x)) - \int_0^1 \nabla \cdot v(t, \psi_t(x)) \,dt  \tag 4
 \end{equation}
-$$  
+$$
    这就是论文中的公式4。
 
 #### 说明
@@ -89,7 +89,9 @@ $$
 ### 中间动作的确定性
   由于流匹配是ODE建模的，因此每一步都是确定性定，满足如下方程:  
 $$
+\begin{equation*}
 p(X_{t+\Delta t} = x|X_t) = \delta(x - X_t - v_\theta(t,X_t)\Delta t)
+\end{equation*}
 $$  
 
 ### ReinFlow算法
