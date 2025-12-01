@@ -82,25 +82,25 @@ $$
 ### ReinFlow算法
 
 **注入可学习噪声**:ReinFlow通过注入可学习的噪声，将流策略的确定性路径转换为离散时间马尔可夫过程。这一转换使得流模型在任意少的去噪步骤下都能进行精确且简单的似然计算，从而促进探索并确保训练的稳定性。  
-  ReinFlow训练了一个噪声注入网络，该网络根据当前动作、时间和观测值输出噪声的标准差。这种设计允许噪声网络自动平衡探索与利用，且具有轻量级实现和广泛的适用性。  
+ReinFlow训练了一个噪声注入网络，该网络根据当前动作、时间和观测值输出噪声的标准差。这种设计允许噪声网络自动平衡探索与利用，且具有轻量级实现和广泛的适用性。  
 **精确似然表达式**: ReinFlow通过将流模型转换为离散时间马尔可夫过程，得到了一个精确且简单的似然表达式。这使得在非常少的去噪步骤下也能进行有效的策略梯度优化。  
 **策略梯度定理**: 建立了离散时间马尔可夫过程策略的策略梯度定理，这为ReinFlow的算法设计提供了理论支持，并使得可以应用各种现代深度策略梯度算法来优化噪声注入的流策略。  
 
   加入噪声网络后每一步的采样概率满足如下公式:  
 $$
-a^0 \sim \mathcal{N}(0, \mathbb{I}_{d_A}), \quad a^{k+1} \sim \mathcal{N}\left( \cdot | a^k + v_\theta(t_i, a^k, o) \Delta t_i, \sigma_{\theta'}^2(t_i, a^k, o) \right)  \tag 6
+a^0 \sim \mathcal{N}(0, \mathbb{I}_{d_A}), \quad a^{k+1} \sim \mathcal{N}\left( \cdot | a^k + v_\theta(t_i, a^k, o) \Delta t_i, \sigma_{\theta'}^2(t_i, a^k, o) \right)  \tag{6}
 $$  
   整个去噪过程的联合对数概率(马尔可夫性):  
 $$
-\ln \pi(a^0, \ldots, a^K|_0; \theta, \theta') = \ln \mathcal{N}(0, \mathbb{I}_{d_A}) + \sum_{k=0}^{K-1} \ln \mathcal{N}\left( a^{k+1}|a_h^k + v_\theta(t_k, a_h^k, o) \Delta t_k, \sigma_{\theta'}^2(t_k, a^k, o) \right) \tag 7
+\ln \pi(a^0, \ldots, a^K|_0; \theta, \theta') = \ln \mathcal{N}(0, \mathbb{I}_{d_A}) + \sum_{k=0}^{K-1} \ln \mathcal{N}\left( a^{k+1}|a_h^k + v_\theta(t_k, a_h^k, o) \Delta t_k, \sigma_{\theta'}^2(t_k, a^k, o) \right) \tag{7}
 $$  
   在均匀离散化下，$t_k = \frac{k}{K}$ 且 $\Delta t_k = \frac{1}{K}$。
 
 - ReinFlow算法
-![ss](../images/rl_reinflow_alg1.jpg)  
-
+![算法1](../images/rl_reinflow_alg1.jpg)  
+<br>
 - 策略梯度-PPO实现 
-![ss](../images/rl_reinflow_alg2.jpg)
+![算法2](../images/rl_reinflow_alg2.jpg)
 
 
 ## Flow-GRPO
