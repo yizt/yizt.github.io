@@ -63,7 +63,9 @@ $$
 $$  
    因此，最终得到：  
 $$
-   \ln p_1(\psi_1(x)) = \ln p_0(\psi_0(x)) - \int_0^1 \nabla \cdot v(t, \psi_t(x)) \, dt
+\begin{equation}
+   \ln p_1(\psi_1(x)) = \ln p_0(\psi_0(x)) - \int_0^1 \nabla \cdot v(t, \psi_t(x)) \,dt  \tag 4
+\end{equation}
 $$  
    这就是论文中的公式4。
 
@@ -87,11 +89,15 @@ ReinFlow训练了一个噪声注入网络，该网络根据当前动作、时间
 
   加入噪声网络后每一步的采样概率满足如下公式:  
 $$
+\begin{equation}
 a^0 \sim \mathcal{N}(0, \mathbb{I}_{d_A}), \quad a^{k+1} \sim \mathcal{N}\left( \cdot | a^k + v_\theta(t_i, a^k, o) \Delta t_i, \sigma_{\theta'}^2(t_i, a^k, o) \right)  \tag{6}
+\end{equation}
 $$  
   整个去噪过程的联合对数概率(马尔可夫性):  
 $$
+\begin{equation}
 \ln \pi(a^0, \ldots, a^K|_0; \theta, \theta') = \ln \mathcal{N}(0, \mathbb{I}_{d_A}) + \sum_{k=0}^{K-1} \ln \mathcal{N}\left( a^{k+1}|a_h^k + v_\theta(t_k, a_h^k, o) \Delta t_k, \sigma_{\theta'}^2(t_k, a^k, o) \right) \tag{7}
+\end{equation}
 $$  
   在均匀离散化下，$t_k = \frac{k}{K}$ 且 $\Delta t_k = \frac{1}{K}$。
 
@@ -101,12 +107,6 @@ $$
 - 策略梯度-PPO实现 
 ![算法2](../images/rl_reinflow_alg2.jpg)
 
-
-$$
-\begin{equation}
-e^{\pi i} + 1 = 0 \tag 2
-\end{equation}
-$$
 
 ## Flow-GRPO
  [Flow-GRPO: Training Flow Matching Models via Online RL](https://arxiv.org/pdf/2505.05470)
