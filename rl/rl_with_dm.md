@@ -102,6 +102,12 @@ $$
 ![算法2](../images/rl_reinflow_alg2.jpg)
 
 
+$$
+\begin{equation}
+e^{\pi i} + 1 = 0 \tag 2
+\end{equation}
+$$
+
 ## Flow-GRPO
  [Flow-GRPO: Training Flow Matching Models via Online RL](https://arxiv.org/pdf/2505.05470)
 
