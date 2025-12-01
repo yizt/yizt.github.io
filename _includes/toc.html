@@ -10,24 +10,26 @@
 </script> -->
 <script>
   window.MathJax = {
+    loader: {load: ['[tex]/color','[tex]/empheq', '[tex]/cases']},
     tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']],
-      displayMath: [['$$', '$$']],
+      packages: {'[+]': ['color','empheq', 'cases']},
+      inlineMath: {'[+]': [['$', '$']]},
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
       tags: 'ams',
       tagAlign: 'right', // 标签对齐方式（可选：top/center/bottom/baseline/axis）
       tagSide: 'right',   // 标签位置（左/右）
       useLabelIds: true,  // 确保标签与引用关联
-      // macros: {
-      //   RR: '{\\bf R}',
-      //   bold: ['{\\bf #1}', 1],
-      //   KL: ['D_\\textrm{KL}\\left ( #1 \\| #2 \\right )', 2],
-      //   EE: ['{\\mathbb{E}_{#1} \\left [ #2 \\right ]}', 2],
-      //   scalemath: ['{\\scalebox{#1}{\\mbox{\\ensuremath{\\displaystyle #2}}}}', 2],
-      //   argmin: ['\\operatorname*{\\arg\\min}'],
-      //   ind: '{\\perp\\!\\!\\!\\!\\perp}'
-      // },
-      loader: {
-      load: ['[tex]/empheq', '[tex]/cases'] // 加载必要扩展
+      mathStyle: 'TeX',
+      processEscapes: true,
+      processEnvironments: true,
+      macros: {
+        RR: '{\\bf R}',
+        bold: ['{\\bf #1}', 1],
+        KL: ['D_\\textrm{KL}\\left ( #1 \\| #2 \\right )', 2],
+        EE: ['{\\mathbb{E}_{#1} \\left [ #2 \\right ]}', 2],
+        scalemath: ['{\\scalebox{#1}{\\mbox{\\ensuremath{\\displaystyle #2}}}}', 2],
+        argmin: ['\\operatorname*{\\arg\\min}'],
+        ind: '{\\perp\\!\\!\\!\\!\\perp}'
       },
     }
   };
