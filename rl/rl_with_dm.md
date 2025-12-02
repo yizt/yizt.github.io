@@ -12,6 +12,50 @@ nav_order: 3
  [Learning a Diffusion Model Policy from Rewards via Q-Score Matching](https://arxiv.org/pdf/2312.11752)
 
 
+## DDPO
+ [TRAINING DIFFUSION MODELS WITH REINFORCEMENT LEARNING](https://arxiv.org/pdf/2305.13301)直接优化扩散模型（diffusion models）以满足特定的下游目标（downstream objectives），而不是仅仅匹配数据分布。  
+ 大多数扩散模型的使用场景并不直接关注似然度（likelihoods），而是关注于人类感知的图像质量、药物有效性等下游目标。本文提出了一种基于强化学习（reinforcement learning, RL）的方法，称为去噪扩散策略优化（denoising diffusion policy optimization, DDPO），来直接针对这些下游目标训练扩散模型。 
+### 核心思想
+ 去噪过程（denoising process）作为一个多步马尔可夫决策问题（multi-step markov decision-making problem），以便使用策略梯度算法（policy gradient algorithms）来优化扩散模型。
+
+**多步MDP定义**
+$$
+\begin{equation*}
+\begin{gathered}
+\mathbf{s}_t \triangleq (\mathbf{c}, t, \mathbf{x}_t) \ \ \ // 状态 \\
+\mathbf{a}_t \triangleq \mathbf{x}_{t-1}\ \ \ //动作为单步去噪结果\\
+\pi(\mathbf{a}_t | \mathbf{s}_t) \triangleq p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{c})  \ \ \ //策略 \\
+P(\mathbf{s}_{t+1} | \mathbf{s}_t, \mathbf{a}_t) \triangleq (\delta_{\mathbf{c}}, \delta_{t-1}, \delta_{\mathbf{x}_{t-1}}) \ \ \ //确定性状态转移\\
+p_0(\mathbf{s}_0) \triangleq (p(\mathbf{c}), \delta_T, \mathcal{N}(\mathbf{0}, \mathbf{I})) \ \ \ //初始状态分布 \\
+R(\mathbf{s}_t, \mathbf{a}_t) \triangleq 
+\begin{cases} 
+r(\mathbf{x}_0, \mathbf{c}) & \text{if } t = 0 \ \ \ //只有最后一步有奖励\\ 
+0 & \text{otherwise}
+\end{cases}
+\end{gathered}
+\end{equation*}
+$$
+
+**策略梯度估计**
+  可直接使用Monte Carlo估计  
+  DDPO（去噪扩散策略优化）的第一个变体，我们称之为 DDPOsf，使用得分函数策略梯度估计器(REINFORCE)
+$$
+\begin{equation*}
+\nabla_{\theta} \mathcal{J}_{\text{DDRL}} = \mathbb{E} \left[ \sum_{t=0}^{T} \nabla_{\theta} \log p_{\theta}(x_{t-1} \, | \, x_t, \mathbf{c}) \, r(\mathbf{x}_0, \mathbf{c}) \right]
+\tag{DDPOsf}
+\end{equation*}
+$$
+ DDPOsf每轮数据收集只允许进行一次优化步骤，因为梯度必须使用当前参数生成的数据计算。为了执行多步优化，我们可以使用重要性采样估计器DDPOis
+$$
+\begin{equation*}
+\nabla_{\theta} \mathcal{J}_{\text{DDRL}} = \mathbb{E} \left[ \sum_{t=0}^{T} \frac{p_{\theta}(x_{t-1} \, | \, x_t, \mathbf{c})}{p_{\theta_{\text{old}}}(x_{t-1} \, | \, x_t, \mathbf{c})} \nabla_{\theta} \log p_{\theta}(x_{t-1} \, | \, x_t, \mathbf{c}) \, r(\mathbf{x}_0, \mathbf{c}) \right]
+\tag{DDPOis}
+\end{equation*}
+$$
+
+### DDPO应用示例
+  奖励函数根据下游任务确定,下图是一个提示-图像对齐的示例，给一个提示文本，扩散模型生成图像，利用VLM模型给生成的图像生成描述，最后再利用LLM模型判断原始提示文本与生成描述的相似度作为奖励。
+![](../images/rl_ddpo_example.jpg)
 
 
 ## ReinFlow
