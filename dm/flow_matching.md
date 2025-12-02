@@ -36,6 +36,7 @@ $$
 
 ### 扩散模型定义
   扩散模型可以看作是流模型的SDE版本,在流模型的ODE上增加一个随机项。
+
 $$
 \begin{gather*}
 X_0 \sim p_{\text{init}} \quad \blacktriangleright \text{随机初始化} \\
