@@ -124,10 +124,9 @@ $$X_0 \sim p_{\text{init}}, \quad \frac{d}{dt} X_t = u_t^{\text{target}}(X_t) \i
 特别地，对于此 ODE，有 $X_1 \sim p_{\text{data}}$，因此我们可以说：
 **由方程 $X_0 \sim p_{\text{init}},\  \frac{d}{dt} X_t = u_t^{\text{target}}(X_t)$ 描述的向量场 $u_t^{\text{target}}$ 将噪声 $p_{\text{init}}$ 转换为数据 $p_{\text{data}}$。"**
 
-**证明：** 根据连续性方程，我们需要证明由方程 (19) 所定义的边缘向量场 $u_{t}^{\text{target}}$ 满足连续性方程。可以通过直接计算来证明这一点：
+**证明：** 根据连续性方程，我们需要证明由方程 (19) 所定义的边缘向量场 $u_{t}^{\text{target}}$ 满足连续性方程。可以通过直接计算来证明这一点： 
 
 $$
-\begin{equation*}
 \begin{aligned}
 \partial_{t}p_{t}(x) &\stackrel{{(i)}} =\partial_{t}\int p_{t}(x|z)p_{\text {data}}(z)\mathrm{d}z \quad //p_{t}定义\\
 &=\int\partial_{t}p_{t}(x|z)p_{\text{data}}(z)\mathrm{d}z \\
@@ -136,8 +135,8 @@ $$
 &\stackrel{{(iv)}}{{=}}-\mathrm{div}\left(p_{t}(x)\int u _{t}^{\text{target}}(x|z)\frac{p_{t}(x|z)p_{\text{data}}(z)}{p_{t}(x)}\mathrm{d }z\right)(x)\quad //分子分母同乘p_{t}(x)\\
 &\stackrel{{(v)}}{{=}}-\mathrm{div}\left(p_{t}u_{t}^{ \text{target}}\right)(x) \quad //边缘向量场定义
 \end{aligned}
-\end{equation*}
-$$
+$$  
+
 
 上述等式链的开头和结尾表明，对于 $u_{t}^{\text{target}}$，连续性方程成立。至此已经推导出训练目标$u_{t}^{\text{target}}$的表达式。
 
