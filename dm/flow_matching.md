@@ -20,7 +20,7 @@ X_{0} \sim p_{\text{init}} \quad \blacktriangleright \text{随机初始化} \\
 \frac{\mathrm{d}}{\mathrm{d}t}X_{t} =u^{ \theta}_{t}(X_{t}) \quad \blacktriangleright \text{常微分方程}
 \end{aligned}
 \end{equation*}
-$$
+$$  
 
 其中向量场 $u^{\theta}_{t}$ 是一个具有参数 $\theta$ 的神经网络 $u^{\theta}_{t}$ 。
 即一个具有参数 $\theta$ 的连续函数 $u^{\theta}_{t}: \mathbb{R}^{d} \times [0,1] \rightarrow \mathbb{R}^{d}$ 。
@@ -30,7 +30,7 @@ $$
 \begin{equation*}
 X_{1} \sim p_{\text{data}} \iff \psi^{ \theta}_{1}(X_{0}) \sim p_{\text{data}}
 \end{equation*}
-$$
+$$  
 
 其中 $\psi^{ \theta}_{t}$ 描述由 $u^{ \theta}_{t}$ 诱导的流。注意：虽然它被称为流模型，<span style="color: red;">神经网络参数化的是向量场，而不是流本身</span>。为了计算流，我们需要模拟该常微分方程。在算法1中，我们总结了如何从流模型中采样的过程。
 
@@ -38,10 +38,10 @@ $$
   扩散模型可以看作是流模型的SDE版本,在流模型的ODE上增加一个随机项。
 $$
 \begin{equation*}
-\begin{gather*}
+\begin{align*}
 X_0 \sim p_{\text{init}} \quad \blacktriangleright \text{随机初始化} \\
 dX_t = u^\theta_t(X_t) dt + \sigma dW_t \quad \blacktriangleright \text{随机微分方程}
-\end{gather*}
+\end{align*}
 \end{equation*}
 $$
 $W_t$是维纳过程(布朗运动)
