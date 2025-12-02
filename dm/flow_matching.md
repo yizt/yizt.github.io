@@ -7,7 +7,7 @@ nav_order: 4
 # 流匹配
 
 ## 流匹配基础
- [AnIntroductiontoFlowMatchingandDiffusionModels](https://diffusion.csail.mit.edu/docs/lecture-notes.pdf)
+ 本节所有内容均节选自[AnIntroductiontoFlowMatchingandDiffusionModels](https://diffusion.csail.mit.edu/docs/lecture-notes.pdf)
 
 ### 流模型定义
 
@@ -22,7 +22,7 @@ X_{0} \sim p_{\text{init}} \quad \blacktriangleright \text{随机初始化} \\
 \end{equation*}
 $$
 
-其中向量场 $u^{ \theta}_{t}$ 是一个具有参数 $\theta$ 的神经网络 $u^{ \theta}_{t}$。即一个具有参数 $\theta$ 的连续函数 $u^{ \theta}_{t}: \mathbb{R}^{d} \times [0,1] \rightarrow \mathbb{R}^{d}$。目标是使轨迹的终点 $X_{1}$ 具有分布 $p_{\text{data}}$，即
+其中向量场$u^{\theta}_{t}$是一个具有参数$\theta$ 的神经网络$u^{\theta}_{t}$。即一个具有参数$\theta$ 的连续函数$u^{\theta}_{t}: \mathbb{R}^{d} \times [0,1] \rightarrow \mathbb{R}^{d}$。目标是使轨迹的终点 $X_{1}$具有分布$p_{\text{data}}$，即
 
 $$
 \begin{equation*}
