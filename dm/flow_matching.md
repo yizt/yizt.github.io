@@ -21,8 +21,8 @@ X_{0} \sim p_{\text{init}} \quad \blacktriangleright \text{随机初始化} \\
 \end{aligned}
 \end{equation*}
 $$  
-其中向量场$u^{\theta}<em>{t}$是一个具有参数$\theta$的神经网络$u^{\theta}</em>{t}$
-其中向量场$u^{\theta}_{t}$是一个具有参数$\theta$的神经网络$u^{\theta}_{t}$。
+
+$其中向量场u^{\theta}_{t}$是一个具有参数$\theta$的神经网络$u^{\theta}_{t}$。
 即一个具有参数 $\theta$ 的连续函数 $u^{\theta}_{t}: \mathbb{R}^{d} \times [0,1] \rightarrow \mathbb{R}^{d}$ 。
 目标是使轨迹的终点 $X_{1}$ 具有分布 $p_{\text{data}}$ ，即
 
@@ -128,12 +128,12 @@ $$X_0 \sim p_{\text{init}}, \quad \frac{d}{dt} X_t = u_t^{\text{target}}(X_t) \i
 
 $$
 \begin{aligned}
-\partial_{t}p_{t}(x) &\stackrel{{(i)}} =\partial_{t}\int p_{t}(x|z)p_{\text {data}}(z)\mathrm{d}z \quad //p_{t}定义\\
+\partial_{t}p_{t}(x) &=\partial_{t}\int p_{t}(x|z)p_{\text {data}}(z)\mathrm{d}z \quad //p_{t}定义\\
 &=\int\partial_{t}p_{t}(x|z)p_{\text{data}}(z)\mathrm{d}z \\
-&\stackrel{{(ii)}} = \int-\mathrm{div}(p_{t}(\cdot|z) u_{t}^{\text{target}}(\cdot|z))(x)p_{\text{data}}(z)\mathrm{d}z \quad//条件概率路径的连续性方程\\
-&\stackrel{{(iii)}}{{=}}-\mathrm{div}\left(\int p_{t}(x |z)u_{t}^{\text{target}}(x|z)p_{\text{data}}(z)\mathrm{d}z\right) \quad //积分和散度交换\\
-&\stackrel{{(iv)}}{{=}}-\mathrm{div}\left(p_{t}(x)\int u _{t}^{\text{target}}(x|z)\frac{p_{t}(x|z)p_{\text{data}}(z)}{p_{t}(x)}\mathrm{d }z\right)(x)\quad //分子分母同乘p_{t}(x)\\
-&\stackrel{{(v)}}{{=}}-\mathrm{div}\left(p_{t}u_{t}^{ \text{target}}\right)(x) \quad //边缘向量场定义
+&= \int-\mathrm{div}(p_{t}(\cdot|z) u_{t}^{\text{target}}(\cdot|z))(x)p_{\text{data}}(z)\mathrm{d}z \quad//条件概率路径的连续性方程\\
+&=-\mathrm{div}\left(\int p_{t}(x |z)u_{t}^{\text{target}}(x|z)p_{\text{data}}(z)\mathrm{d}z\right) \quad //积分和散度交换\\
+&=-\mathrm{div}\left(p_{t}(x)\int u _{t}^{\text{target}}(x|z)\frac{p_{t}(x|z)p_{\text{data}}(z)}{p_{t}(x)}\mathrm{d }z\right)(x)\quad //分子分母同乘p_{t}(x)\\
+&=-\mathrm{div}\left(p_{t}u_{t}^{ \text{target}}\right)(x) \quad //边缘向量场定义
 \end{aligned}
 $$  
 
