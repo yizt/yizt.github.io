@@ -59,9 +59,9 @@ $$
 其中 $u_{t}^{\theta}$ 是一个神经网络，$\sigma_{t}$ 是固定的扩散系数。最小化一个**均方误差**损失函数 $\mathcal{L}(\theta)$ ：
 
 $$
-\begin{equation}
-\mathcal{L}(\theta) = \|u_{t}^{\theta}(x) - \underbrace{u_{t}^{\text{target}}(x)}_{ \text{训练目标}}\|^{2}
-\end{equation}
+\begin{equation*}
+\mathcal{L}(\theta) = \|u_{t}^{\theta}(x) - \underbrace{u_{t}^{\text{target}}(x)}_{ \text{训练目标}}\|^{2}  
+\end{equation*}
 $$
 
 其中 $u_{t}^{\text{target}}(x)$ 是我们想要逼近的**训练目标**。接下来是**找到训练目标$u_{t}^{\text{target}}$的一个方程**。
@@ -147,10 +147,12 @@ $$
 **flow matching loss**  
   流匹配损失定义如下：
 $$
-\begin{align*}
+\begin{equation*}
+\begin{aligned}
 \mathcal{L}_{\mathrm{FM}}(\theta) &= \mathbb{E}_{t \sim \operatorname{Unif}, x \sim p_{t}}\left[\left\|u_{t}^{\theta}(x)-u_{t}^{\mathrm{target}}(x)\right\|^{2}\right] \\
 &=\mathbb{E}_{t \sim \operatorname{Unif}, z \sim p_{\mathrm{data}}, x \sim p_{t}(\cdot \mid z)}\left[\left\|u_{t}^{\theta}(x)-u_{t}^{\mathrm{target}}(x)\right\|^{2}\right] \tag {42}
-\end{align*}
+\end{aligned}
+\end{equation*}
 $$
 
 **conditional flow matching loss**  
