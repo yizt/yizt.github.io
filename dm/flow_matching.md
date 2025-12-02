@@ -21,7 +21,7 @@ X_{0} \sim p_{\text{init}} \quad \blacktriangleright \text{随机初始化} \\
 \end{aligned}
 \end{equation*}
 $$  
-
+其中向量场$u^{\theta}<em>{t}$是一个具有参数$\theta$的神经网络$u^{\theta}</em>{t}$
 其中向量场$u^{\theta}_{t}$是一个具有参数$\theta$的神经网络$u^{\theta}_{t}$。
 即一个具有参数 $\theta$ 的连续函数 $u^{\theta}_{t}: \mathbb{R}^{d} \times [0,1] \rightarrow \mathbb{R}^{d}$ 。
 目标是使轨迹的终点 $X_{1}$ 具有分布 $p_{\text{data}}$ ，即
@@ -145,15 +145,15 @@ $$
   虽然已经有了目标向量场$u_{t}^{\text{target}}$的表达式，但是精确计算需要在所有数据点z上积分,但是条件向量场$u_{t}^{\text{target}}(x|z)$很容易计算。接下来定义`flow matching loss`和`conditional flow matching loss`，并证明它们是等价的。
 
 **flow matching loss**  
-  流匹配损失定义如下：
+  流匹配损失定义如下： 
+
 $$
-\begin{equation*}
-\begin{aligned}
+\begin{align*}
 \mathcal{L}_{\mathrm{FM}}(\theta) &= \mathbb{E}_{t \sim \operatorname{Unif}, x \sim p_{t}}\left[\left\|u_{t}^{\theta}(x)-u_{t}^{\mathrm{target}}(x)\right\|^{2}\right] \\
-&=\mathbb{E}_{t \sim \operatorname{Unif}, z \sim p_{\mathrm{data}}, x \sim p_{t}(\cdot \mid z)}\left[\left\|u_{t}^{\theta}(x)-u_{t}^{\mathrm{target}}(x)\right\|^{2}\right] \tag {42}
-\end{aligned}
-\end{equation*}
-$$
+&=\mathbb{E}_{t \sim \operatorname{Unif}, z \sim p_{\mathrm{data}}, x \sim p_{t}(\cdot \mid z)}\left[\left\|u_{t}^{\theta}(x)-u_{t}^{\mathrm{target}}(x)\right\|^{2}\right] \tag{42}
+\end{align*}
+$$  
+
 
 **conditional flow matching loss**  
   条件流匹配损失定义如下：
