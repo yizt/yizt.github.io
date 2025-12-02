@@ -37,12 +37,10 @@ $$
 ### 扩散模型定义
   扩散模型可以看作是流模型的SDE版本,在流模型的ODE上增加一个随机项。
 $$
-\begin{equation*}
-\begin{align*}
+\begin{gather*}
 X_0 \sim p_{\text{init}} \quad \blacktriangleright \text{随机初始化} \\
 dX_t = u^\theta_t(X_t) dt + \sigma dW_t \quad \blacktriangleright \text{随机微分方程}
-\end{align*}
-\end{equation*}
+\end{gather*}
 $$
 $W_t$是维纳过程(布朗运动)
 
@@ -70,12 +68,20 @@ $$
  在推到训练目标之前，首先定义条件概率路径(conditional probability path)和边缘概率路径(marginal probability path)。  
  构建训练目标 $u_{t}^{\text{target}}$ 的第一步是指定一条**概率路径**。直观上，一条概率路径指定了噪声 $p_{\text{init}}$ 和数据 $p_{\text{data}}$ 之间的渐进插值。对于一个数据点 $z\in\mathbb{R}^{d}$，用 $\delta_{z}$ 表示 **Dirac delta** "分布"。这是可以想象的最简单的分布：从 $\delta_{z}$ 中采样总是返回 $z$（即它是确定性的）。一条**条件（插值）概率路径** 是一组定义在 $\mathbb{R}^{d}$ 上的分布 $p_{t}(x|z)$，满足：
 
-$$p_{0}(\cdot|z)=p_{\text{init}},\quad p_{1}(\cdot|z)=\delta_{z}\quad\text{ 对于所有 }z\in\mathbb{R}^{d}.$$ (12)
+$$
+\begin{gather*}
+p_{0}(\cdot|z)=p_{\text{init}},\quad p_{1}(\cdot|z)=\delta_{z}\quad\text{ 对于所有 }z\in\mathbb{R}^{d}.
+\end{gather*}
+$$
 
 换句话说，一条条件概率路径逐渐地将*单个*数据点转换为分布 $p_{\text{init}}$。可以将概率路径视为分布空间中的一条轨迹。每一条条件概率路径 $p_{t}(x|z)$ 都导出一条**边际概率路径** $p_{t}(x)$，其定义为：我们先从数据分布 $p_{\text{data}}$ 中采样一个数据点 $z$，然后从 $p_{t}(\cdot|z)$ 中采样，所获得的分布：
 
-$$z\sim p_{\text{data}},\quad x\sim p_{t}(\cdot|z)\quad\Rightarrow x \sim p_{t} \quad\blacktriangleright\text{从边际路径采样}$$ (13)
-$$p_{t}(x)=\int p_{t}(x|z)p_{\text{data}}(z)\mathrm{d}z \quad\blacktriangleright\text{边际路径的密度}$$ (14)
+$$
+\begin{gather*}
+z\sim p_{\text{data}},\quad x\sim p_{t}(\cdot|z)\quad\Rightarrow x \sim p_{t} \quad\blacktriangleright\text{从边际路径采样} \\
+p_{t}(x)=\int p_{t}(x|z)p_{\text{data}}(z)\mathrm{d}z \quad\blacktriangleright\text{边际路径的密度}
+\end{gather*}
+$$
 
 注意，我们知道如何从 $p_{t}$ 中采样，但我们不知道密度值 $p_{t}(x)$，因为该积分是难以处理的。
 
@@ -96,9 +102,11 @@ $$
 
 **定理10（边缘化技巧）**
 
-对于每一个数据点$z \in \mathbb{R}^d$，令 $u_t^{\text{target}}(\cdot|z)$ 表示一个条件向量场，其定义使得对应的 ODE 能生成条件概率路径 $p_t(\cdot|z)$，即：
+对于每一个数据点$z \in \mathbb{R}^d$，令 $u_t^{\text{target}}(\cdot|z)$ 表示一个条件向量场，其定义使得对应的ODE能生成条件概率路径 $p_t(\cdot|z)$，即：
 
-$$X_0 \sim p_{\text{init}}, \quad \frac{d}{dt} X_t = u_t^{\text{target}}(X_t|z) \implies X_t \sim p_t(\cdot|z) \quad (0 \leq t \leq 1).$$
+$$
+X_0 \sim p_{\text{init}}, \quad \frac{d}{dt} X_t = u_t^{\text{target}}(X_t|z) \implies X_t \sim p_t(\cdot|z) \quad (0 \leq t \leq 1).
+$$
 
 那么，由下式定义的**边缘向量场** $u_t^{\text{target}}(x)$：
 $$u_t^{\text{target}}(x) = \int u_t^{\text{target}}(x|z)\frac{p_t(x|z)p_{\text{data}}(z)}{p_t(x)}dz, \tag{19}$$
