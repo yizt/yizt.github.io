@@ -109,7 +109,11 @@ X_0 \sim p_{\text{init}}, \quad \frac{d}{dt} X_t = u_t^{\text{target}}(X_t|z) \i
 $$
 
 那么，由下式定义的**边缘向量场** $u_t^{\text{target}}(x)$：
-$$u_t^{\text{target}}(x) = \int u_t^{\text{target}}(x|z)\frac{p_t(x|z)p_{\text{data}}(z)}{p_t(x)}dz, \tag{19}$$
+$$
+\begin{equation}
+u_t^{\text{target}}(x) = \int u_t^{\text{target}}(x|z)\frac{p_t(x|z)p_{\text{data}}(z)}{p_t(x)}dz, \tag{19}
+\end{equation}
+$$
 
 遵循**边缘概率路径**，即：
 
@@ -122,14 +126,14 @@ $$X_0 \sim p_{\text{init}}, \quad \frac{d}{dt} X_t = u_t^{\text{target}}(X_t) \i
 
 $$
 \begin{equation*}
-\begin{align*}
+\begin{aligned}
 \partial_{t}p_{t}(x) &\stackrel{{(i)}} =\partial_{t}\int p_{t}(x|z)p_{\text {data}}(z)\mathrm{d}z \quad //p_{t}定义\\
 &=\int\partial_{t}p_{t}(x|z)p_{\text{data}}(z)\mathrm{d}z \\
 &\stackrel{{(ii)}} = \int-\mathrm{div}(p_{t}(\cdot|z) u_{t}^{\text{target}}(\cdot|z))(x)p_{\text{data}}(z)\mathrm{d}z \quad//条件概率路径的连续性方程\\
 &\stackrel{{(iii)}}{{=}}-\mathrm{div}\left(\int p_{t}(x |z)u_{t}^{\text{target}}(x|z)p_{\text{data}}(z)\mathrm{d}z\right) \quad //积分和散度交换\\
 &\stackrel{{(iv)}}{{=}}-\mathrm{div}\left(p_{t}(x)\int u _{t}^{\text{target}}(x|z)\frac{p_{t}(x|z)p_{\text{data}}(z)}{p_{t}(x)}\mathrm{d }z\right)(x)\quad //分子分母同乘p_{t}(x)\\
 &\stackrel{{(v)}}{{=}}-\mathrm{div}\left(p_{t}u_{t}^{ \text{target}}\right)(x) \quad //边缘向量场定义
-\end{align*}
+\end{aligned}
 \end{equation*}
 $$
 
