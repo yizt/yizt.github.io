@@ -76,7 +76,7 @@ p_{0}(\cdot|z)=p_{\text{init}},\quad p_{1}(\cdot|z)=\delta_{z}\quad\text{ 对于
 \end{gather*}
 $$
 
-换句话说，一条条件概率路径逐渐地将*单个*数据点转换为分布 $p_{\text{init}}$。可以将概率路径视为分布空间中的一条轨迹。每一条条件概率路径 $p_{t}(x|z)$ 都导出一条**边际概率路径** $p_{t}(x)$，其定义为：我们先从数据分布 $p_{\text{data}}$ 中采样一个数据点 $z$，然后从 $p_{t}(\cdot|z)$ 中采样，所获得的分布：
+换句话说，一条条件概率路径逐渐地将*单个*数据点转换为分布 $p_{\text{init}}$。可以将概率路径视为分布空间中的一条轨迹。每一条条件概率路径 $p_{t}(x \lvert z)$ 都导出一条**边际概率路径** $p_{t}(x)$，其定义为：我们先从数据分布 $p_{\text{data}}$ 中采样一个数据点 $z$，然后从 $p_{t}(\cdot \lvert z)$ 中采样，所获得的分布：
 
 $$
 \begin{gather*}
@@ -104,7 +104,7 @@ $$
 
 **定理10（边缘化技巧）**
 
-对于每一个数据点$z \in \mathbb{R}^d$，令 $u_t^{\text{target}}(\cdot|z)$ 表示一个条件向量场，其定义使得对应的ODE能生成条件概率路径 $p_t(\cdot|z)$，即：
+对于每一个数据点$z \in \mathbb{R}^d$，令 $u_t^{\text{target}}(\cdot \lvert z)$ 表示一个条件向量场，其定义使得对应的ODE能生成条件概率路径 $p_t(\cdot \lvert z)$，即： 
 
 $$
 X_0 \sim p_{\text{init}}, \quad \frac{d}{dt} X_t = u_t^{\text{target}}(X_t|z) \implies X_t \sim p_t(\cdot|z) \quad (0 \leq t \leq 1).
