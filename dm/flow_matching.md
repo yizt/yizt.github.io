@@ -33,7 +33,7 @@ X_{1} \sim p_{\text{data}} \iff \psi^{ \theta}_{1}(X_{0}) \sim p_{\text{data}}
 \end{equation*}
 $$  
 
-其中 $\psi^{\theta}_{t}$ 描述由 $u^{\theta}_{t}$ 诱导的流。注意：虽然它被称为流模型，<span style="color: red;">神经网络参数化的是向量场，而不是流本身</span>。
+其中 $\psi_{t}^{\theta}$ 描述由 $u_{t}^{\theta}$ 诱导的流。注意：虽然它被称为流模型，<span style="color: red;">神经网络参数化的是向量场，而不是流本身</span>。
 ### 扩散模型定义
   扩散模型可以看作是流模型的SDE版本,在流模型的ODE上增加一个随机项。
 
