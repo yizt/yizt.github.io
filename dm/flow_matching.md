@@ -124,6 +124,8 @@ $$X_0 \sim p_{\text{init}}, \quad \frac{d}{dt} X_t = u_t^{\text{target}}(X_t) \i
 特别地，对于此 ODE，有 $X_1 \sim p_{\text{data}}$，因此我们可以说：
 **由方程 $X_0 \sim p_{\text{init}},\  \frac{d}{dt} X_t = u_t^{\text{target}}(X_t)$ 描述的向量场 $u_t^{\text{target}}$ 将噪声 $p_{\text{init}}$ 转换为数据 $p_{\text{data}}$。"**
 
+说明:由公式19可知,<span style='color:red'>边缘向量场等于各数据的$z$的条件向量场加权求和/积分,权重等于给定$x$时数据点$z$后验概率$p_t(z \lvert x)=\frac{p_t(x \vert z)p_{\text{data}}(z)}{p_t(x)}$</span>。
+
 **证明：** 根据连续性方程，我们需要证明由方程 (19) 所定义的边缘向量场 $u_{t}^{\text{target}}$ 满足连续性方程。可以通过直接计算来证明这一点： 
 
 $$
@@ -161,3 +163,39 @@ $$
 \mathcal{L}_{\text{CFM}}(\theta) = \mathbb{E}_{t \sim \text{Unif}[0,1], \, z \sim p_{\text{data}}, \, x \sim p_t(x|z)} \left[ \lVert u_t^\theta(x) - u_t^{\text{target}}(x|z) \rVert^2 \right] \tag {43}
 \end{equation}
 $$
+
+
+**证明：** 该证明通过将均方误差展开为三个分量并去除常数项来完成：
+
+$$
+\begin{align*}
+\mathcal{L}_{\text{FM}}(\theta) &= \mathbb{E}_{t\sim\text{Unif},x\sim p_t}[\|u^\theta_t(x)-u^{\text{target}}_{t}(x)\|^2] \\
+&= \mathbb{E}_{t\sim\text{Unif},x\sim p_t}[\|u^\theta_t(x)\|^2-2u^\theta_t(x)^T u^{\text{target}}_{t}(x)+\|u^{\text{target}}_{t}(x)\|^2] \\
+&= \mathbb{E}_{t\sim\text{Unif},x\sim p_t}\left[\|u^\theta_t(x)\|^2\right]-2\mathbb{E}_{t\sim\text{Unif},x\sim p_t}[u^\theta_t(x)^T u^{\text{target}}_{t}(x)]+ \underbrace{\mathbb{E}_{t\sim\text{Unif}_{[0,1]},x\sim p_t}[\|u^{\text{target}}_{t}(x)\|^2]}_{=:C_1} \quad /最后一项跟\theta无关 \\
+&= \mathbb{E}_{t\sim\text{Unif},z\sim p_{\text{data}},x\sim p_{t}(\cdot|z)}[\|u^\theta_t(x)\|^2]-2\mathbb{E}_{t\sim\text{Unif},x\sim p_t}[u^\theta_t(x)^T u^{\text{target}}_{t}(x)]+C_1
+\end{align*}
+$$
+
+重新表达第二项：
+
+$$
+\begin{align*}
+\mathbb{E}_{t \sim \text{Unif}, x \sim p_t}[u_t^\theta(x)^T u_t^{\text{target}}(x)] &= \int_0^1 \int_{\mathbb{R}^d} p_t(x) u_t^\theta(x)^T u_t^{\text{target}}(x) \, dx \, dt \quad //期望积分表示,0\sim1的均匀分布概率密度恒为1 \\
+&= \int_0^1 \int_{\mathbb{R}^d} p_t(x) u_t^\theta(x)^T \left[ \int_{\mathbb{R}^d} u_t^{\text{target}}(x|z) \frac{p_t(x|z)p_{\text{data}}(z)}{p_t(x)} \, dz \right] \, dx \, dt \qquad //边缘向量场定义\\
+&= \int_0^1 \int_{\mathbb{R}^d} \int_{\mathbb{R}^d} u_t^\theta(x)^T u_t^{\text{target}}(x|z) p_t(x|z) p_{\text{data}}(z) \, dz \, dx \, dt \quad //p_t(x)消除 \\
+&\overset{(iv)}{=} \mathbb{E}_{t \sim \text{Unif}, z \sim p_{\text{data}}, x \sim p_t(\cdot | z)} [u_t^\theta(x)^T u_t^{\text{target}}(x|z)] \quad //积分改期望表示
+\end{align*}
+$$
+
+ 将上式结论代入原流匹配损失等式有：
+
+$$
+\begin{align*}
+\mathcal{L}_{\text{FM}}(\theta) &= \mathbb{E}_{t\sim\text{Unif},z\sim p_{\text{data}},x\sim p_{t}(\cdot|z)}[\|u_{t}^{\theta}(x)\|^{2}] - 2\mathbb{E}_{t\sim\text{Unif},z\sim p_{\text{data}},x\sim p_{t}(\cdot|z)}[u_{t}^{\theta}(x)^{T}u_{t}^{\text{target}}(x|z)] + C_1 \\
+&= \mathbb{E}_{t\sim\text{Unif},z\sim p_{\text{data}},x\sim p_{t}(\cdot|z)}\left[\|u_{t}^{\theta}(x)\|^{2} - 2u_{t}^{\theta}(x)^{T}u_{t}^{\text{target}}(x|z) + {\color{red}\|u_{t}^{\text{target}}(x|z)\|^{2} - \|u_{t}^{\text{target}}(x|z)\|^{2}}\right] + C_1 \quad //同时加减常数项 \\ 
+&= \mathbb{E}_{t\sim\text{Unif},z\sim p_{\text{data}},x\sim p_{t}(\cdot|z)}[\|u_{t}^{\theta}(x) - u_{t}^{\text{target}}(x|z)\|^{2}] + \underbrace{\mathbb{E}_{t,z,x}[-\|u_{t}^{\text{target}}(x|z)\|^{2}]}_{C_2} + C_1 \\
+&= \mathcal{L}_{\text{CFM}}(\theta) + \underbrace{C_2 + C_1}_{=:C}
+\end{align*}
+$$
+
+ 至此已经证明流匹配损失与条件流匹配损是等价的，它们仅相差常数项，而条件流匹配损失中的条件向量场是容易计算的。因此流匹配训练目标直接使用<span style="color: red;">公式43定义的条件流匹配损失</span>。
