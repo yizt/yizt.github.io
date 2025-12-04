@@ -21,8 +21,7 @@ X_{0} \sim p_{\text{init}} \quad \blacktriangleright \text{随机初始化} \\
 \end{aligned}
 \end{equation*}
 $$  
-
-$u^{\theta}_{t}$  
+ 
 
 其中向量场$u_{t}^{\theta}$是一个具有参数$\theta$的神经网络$u_{t}^{\theta}$。
 即一个具有参数$\theta$ 的连续函数 $u_{t}^{\theta}: \mathbb{R}^{d} \times [0,1] \rightarrow \mathbb{R}^{d}$ 。目标是使轨迹的终点$X_{1}$ 具有分布$p_{\text{data}}$ ，即
@@ -192,10 +191,13 @@ $$
 $$
 \begin{align*}
 \mathcal{L}_{\text{FM}}(\theta) &= \mathbb{E}_{t\sim\text{Unif},z\sim p_{\text{data}},x\sim p_{t}(\cdot|z)}[\|u_{t}^{\theta}(x)\|^{2}] - 2\mathbb{E}_{t\sim\text{Unif},z\sim p_{\text{data}},x\sim p_{t}(\cdot|z)}[u_{t}^{\theta}(x)^{T}u_{t}^{\text{target}}(x|z)] + C_1 \\
-&= \mathbb{E}_{t\sim\text{Unif},z\sim p_{\text{data}},x\sim p_{t}(\cdot|z)}\left[\|u_{t}^{\theta}(x)\|^{2} - 2u_{t}^{\theta}(x)^{T}u_{t}^{\text{target}}(x|z) + {\color{red}\|u_{t}^{\text{target}}(x|z)\|^{2} - \|u_{t}^{\text{target}}(x|z)\|^{2}}\right] + C_1 \quad //同时加减常数项 \\ 
+&= \mathbb{E}_{t\sim\text{Unif},z\sim p_{\text{data}},x\sim p_{t}(\cdot|z)}\left[\|u_{t}^{\theta}(x)\|^{2} - 2u_{t}^{\theta}(x)^{T}u_{t}^{\text{target}}(x|z) + {\|u_{t}^{\text{target}}(x|z)\|^{2} - \|u_{t}^{\text{target}}(x|z)\|^{2}}\right] + C_1 \quad //同时加减常数项 \\ 
 &= \mathbb{E}_{t\sim\text{Unif},z\sim p_{\text{data}},x\sim p_{t}(\cdot|z)}[\|u_{t}^{\theta}(x) - u_{t}^{\text{target}}(x|z)\|^{2}] + \underbrace{\mathbb{E}_{t,z,x}[-\|u_{t}^{\text{target}}(x|z)\|^{2}]}_{C_2} + C_1 \\
 &= \mathcal{L}_{\text{CFM}}(\theta) + \underbrace{C_2 + C_1}_{=:C}
 \end{align*}
 $$
 
  至此已经证明流匹配损失与条件流匹配损是等价的，它们仅相差常数项，而条件流匹配损失中的条件向量场是容易计算的。因此流匹配训练目标直接使用<span style="color: red;">公式43定义的条件流匹配损失</span>。
+
+### 常用的条件流向量场
+ 目前已知流匹配的训练目标只需要计算条件向量场即可，那么对于常用的高斯概率路径
