@@ -252,16 +252,18 @@ $$
 
 在流匹配采样过程中，可以通过以下公式预测样本$\hat{x}_0$ 和噪声$\hat{x}_1$：
 $$
+\begin{equation*}
 \hat{x}_0 = x_t - t\hat{v}, \quad \hat{x}_1 = x_t + (1 - t)\hat{v}.
+\end{equation*}
 $$
 Flow-ODE采样更新公式如下：
 
 $$
-\begin{aligned}
+\begin{align*}
 \hat{x}_{t-\Delta t} &= x_t - \hat{v}_\theta(x_t, t) \Delta t \\
 &= (1 - (t - \Delta t)) \underbrace{(x_t - t\hat{v}_\theta(x_t, t))}_{\text{predicted } \hat{x}_0} + (t - \Delta t) \underbrace{(x_t + (1 - t)\hat{v}_\theta(x_t, t))}_{\text{predicted } \hat{x}_1} \\
 &= \underbrace{(1 - (t - \Delta t))}_{\text{coefficient of sample}} \hat{x}_0 + \underbrace{(t - \Delta t)}_{\text{coefficient of noise}}\hat{x}_1.  \tag 8
-\end{aligned}
+\end{align*}
 $$  
 
 所以流匹配中样本系数调度满足样本和噪声系数之和为1
@@ -329,11 +331,11 @@ $$\boldsymbol{x}_{t-\Delta t} = (1 - (t - \Delta t)) \hat{\boldsymbol{x}}_0 + (t
 
 其中 $\eta \in [0, 1]$ 控制随机强度。该公式满足CPS的要求，并具有如图3.d所示的直观几何解释。由于我们的采样算法基于CPS，故将其命名为Flow-CPS。
 
-为了使用GRPO进行训练，我们还需要定义 $p_\theta (\boldsymbol{x}_{t-1}^i |\boldsymbol{x}_t^i)$，其定义如下：
+为了使用GRPO进行训练，我们还需要定义 $p_\theta (\boldsymbol{x}_{t-1}^i \mid \boldsymbol{x}_t^i)$，其定义如下：
 
 $$\log p_\theta (\boldsymbol{x}_{t-1}^i |\boldsymbol{x}_t^i) = -\frac{\|\boldsymbol{x}_{t-\Delta t} - \mu_\theta (\boldsymbol{x}_t, t)\|^2}{2\sigma_t^2} - \log \sigma_t - \log \sqrt{2\pi},$$
 
-本文中，$\mu_\theta (\boldsymbol{x}_t, t) = (1 - (t - \Delta t)) \hat{\boldsymbol{x}}_0 + (t - \Delta t) \cos(\frac{\eta \pi}{2}) \hat{\boldsymbol{x}}_1$。对于每一步，$-\log \sigma_t - \log \sqrt{2\pi}$ 是一个常数值，在计算比值 $r_t^i (\theta) = \frac{p_\theta (\boldsymbol{x}_{t-1}^i |\boldsymbol{x}_t^i)}{p_{\theta \text{old}} (\boldsymbol{x}_{t-1}^i |\boldsymbol{x}_t^i)}$ 时会抵消。此外，我们去掉了分母中的 $\sigma_t$，以避免在最后时间步出现除以零或极小值的情况。因此，我们对数概率的定义简化为：
+本文中，$\mu_\theta (\boldsymbol{x}_t, t) = (1 - (t - \Delta t)) \hat{\boldsymbol{x}}_0 + (t - \Delta t) \cos(\frac{\eta \pi}{2}) \hat{\boldsymbol{x}}_1$。对于每一步，$-\log \sigma_t - \log \sqrt{2\pi}$ 是一个常数值，在计算比值 $r_t^i (\theta) = \frac{p_\theta (\boldsymbol{x}_{t-1}^i \mid \boldsymbol{x}_t^i)}{p_{\theta \text{old}} (\boldsymbol{x}_{t-1}^i \mid \boldsymbol{x}_t^i)}$ 时会抵消。此外，我们去掉了分母中的 $\sigma_t$，以避免在最后时间步出现除以零或极小值的情况。因此，我们对数概率的定义简化为：
 
 $$\log p_\theta (\boldsymbol{x}_{t-1}^i |\boldsymbol{x}_t^i) = -\|\boldsymbol{x}_{t-1} - \mu_\theta (\boldsymbol{x}_t, t)\|^2.$$
 
