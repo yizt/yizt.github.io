@@ -168,10 +168,63 @@ $$
 
 ## Flow-GRPO
  [Flow-GRPO: Training Flow Matching Models via Online RL](https://arxiv.org/pdf/2505.05470)
+ ReinFlow算法通过在流批匹配每一步采样过程中增加噪声来实现随机探索,Flow-GRPO直接将流匹配采样过程转为等价的SDE过程。对于Rectified Flow，带澡数据$x_t$ 满足如下公式
+$$
+\begin{equation*}
+x_t = (1 - t) x_0 + t x_1
+\end{equation*}
+$$
+ 其中$x_0$为正式数据分布,$x_1$为高斯噪声分布。该流匹配对于前向过程ODE公式如下:
+$$
+\begin{equation*}
+dx_t = v_tdt
+\end{equation*}
+$$ 
+根据福克-普朗克方程（Fokker-Planck Equation, FPE）中SDE与ODE的等价关系，其对应的SDE方程如下：
+$$
+\begin{equation*}
+dx_t = \left( v_t(x_t) + \frac{\sigma_t^2}{2} \nabla \log p_t(x_t) \right) dt + \sigma_t dw 
+\end{equation*}
+$$ 
+
+根据Reverse-time SDE公式可知其对应的反向采样过程SDE满足如下公式:
+
+$$
+\begin{align*}
+dx_t &= \left( v_t(x_t) + \frac{\sigma_t^2}{2} \nabla \log p_t(x_t) - \sigma_t^2 \nabla \log p_t(x_t) \right) dt + \sigma_t dw \\
+&=\left( v_t(x_t) - \frac{\sigma_t^2}{2} \nabla \log p_t(x_t) \right) dt + \sigma_t dw \tag{7}
+\end{align*} 
+$$  
+而对于通用的高斯概率路径$x_t \sim \mathcal{N}\left(x_t \mid \alpha_t x_0, \beta_t^2 I\right)$得分函数与速度场满足如下公式：
+$$
+\begin{align*}
+s_{t}(x)&=\frac{\alpha_{t}u_{t}(x)-\dot{\alpha}_{t}x}{\beta_{t}^{2}\dot{\alpha}_{t}-\alpha_{t}\dot{\beta}_{t}\beta_{t}} \\ 
+&=\frac{(1-t)u_{t}(x)+x}{t^{2}(-1)-(1-t)t} \quad //\alpha_t = 1 − t, \beta_t = t, \dot{\alpha}_{t}=-1,\dot{\beta}_{t}=1 \\
+&=\frac{(1-t)u_{t}(x)+x}{-t} \\
+&=-\frac{x}{t} -\frac{(1-t)u_{t}}{t}
+\end{align*} 
+
+$$
+将上式带入公式7有
+$$
+\begin{equation*}
+dx_t = \left[ v_t(x_t) + \frac{\sigma_t^2}{2t} \bigl( x_t + (1-t)v_t(x_t) \bigr) \right] dt + \sigma_t dw \tag 8
+\end{equation*}
+$$
+ 为数值求解 SDE，采用 **Euler-Maruyama 离散化方法**，得到如下更新公式：
+$$
+\begin{equation*}
+\boldsymbol{x}_{t-\Delta t} = \boldsymbol{x}_t - \left[ v_\theta(\boldsymbol{x}_t, t) + \frac{\sigma_t^2}{2t}(\boldsymbol{x}_t + (1 - t)v_\theta(\boldsymbol{x}_t, t)) \right] \Delta t + \sigma_t\sqrt{\Delta t}\epsilon \tag 9 
+\end{equation*}
+$$
+注意：<span style='color:red'>原论文中公式是错误的,反向采样过程$t-\Delta t$,而不是$t+\Delta t$</span>
 
 
 ## Flow-CPS
-[COEFFICIENTS-PRESERVING SAMPLING FOR REINFORCEMENT LEARNING WITH FLOW MATCHING](https://arxiv.org/pdf/2509.05952)
+[COEFFICIENTS-PRESERVING SAMPLING FOR REINFORCEMENT LEARNING WITH FLOW MATCHING](https://arxiv.org/pdf/2509.05952)Flow-GRPO、Dance-GRPO 等方法为了获得样本多样性，将确定性 Flow-ODE 改写成随机微分方程（SDE），但生成的图像在训练阶段始终带有显著噪声。本文通过理论分析表明，SDE 每步注入的随机项与调度器要求的噪声水平不匹配，造成“超额噪声”不断累积，最终噪声水平不为零。  
+  本文提出 Coefficients-Preserving Sampling（CPS），在保持调度器系数严格一致的前提下注入随机性，彻底消除噪声伪影，使奖励计算准确，进而提升 RL 训练速度与稳定性。
+![](../images/rl_flow_cps_fig1.jpg)
+
 
 ## CFGRL
  [Diffusion Guidance Is a Controllable Policy Improvement Operator](https://arxiv.org/pdf/2505.23458)
