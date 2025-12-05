@@ -225,6 +225,119 @@ $$
   本文提出 Coefficients-Preserving Sampling（CPS），在保持调度器系数严格一致的前提下注入随机性，彻底消除噪声伪影，使奖励计算准确，进而提升 RL 训练速度与稳定性。
 ![](../images/rl_flow_cps_fig1.jpg)
 
+### 理论分析
+
+**定义1（系数保持采样）Coefficients-Preserving Sampling**  
+若某个采样过程满足以下两个条件，则被视为**系数保持采样**：
+1. **样本系数**必须严格遵循**调度器**在所有时间步上的分配。  
+2. **总噪声水平**（定义为单个多元噪声的标准差或多个独立噪声的标准差之和）必须与调度器在所有时间步上保持一致。
+
+**DDIM采样**公式如下: 
+$$
+\begin{equation*}
+x_{t-1} = \underbrace{\sqrt{\alpha_{t-1}} \left( \frac{x_t - \sqrt{1 - \alpha_t} \epsilon_\theta^{(t)}(x_t)}{\sqrt{\alpha_t}} \right)}_{\text{predicted}\ x_0} + \sqrt{1 - \alpha_{t-1} - \sigma_t^2} \cdot \underbrace{\epsilon_\theta^{(t)}(x_t)}_{\text{predicted}\ noise} + \underbrace{\sigma_t \epsilon_t}_{\text{random noise}}
+\end{equation*}
+$$  
+
+其中：
+- $\alpha_t$ 是噪声调度参数，控制前向过程的方差。
+- $\epsilon_\theta^{(t)}(x_t)$ 是训练好的去噪网络，用于预测给定 $x_t$ 时的噪声。
+- $\epsilon_t \sim \mathcal{N}(0, I)$ 是独立于 $\epsilon_\theta^{(t)}(x_t)$的额外高斯噪声，其系数 $\sigma_t$ 控制随机性水平。
+- 当 $\sigma_t = \sqrt{\frac{1 - \alpha_{t-1}}{1 - \alpha_t}} \sqrt{1 - \frac{\alpha_t}{\alpha_{t-1}}}$**
+此时前向过程是**马尔可夫的**（Markovian），生成过程等价于 **DDPM**（标准的随机扩散模型）
+   
+显然DDIM采样是系数保持的。
+
+**FLOW-SDE采样**
+
+在流匹配采样过程中，可以通过以下公式预测样本$\hat{x}_0$ 和噪声$\hat{x}_1$：
+$$
+\hat{x}_0 = x_t - t\hat{v}, \quad \hat{x}_1 = x_t + (1 - t)\hat{v}.
+$$
+Flow-ODE采样更新公式如下：
+
+$$
+\begin{aligned}
+\hat{x}_{t-\Delta t} &= x_t - \hat{v}_\theta(x_t, t) \Delta t \\
+&= (1 - (t - \Delta t)) \underbrace{(x_t - t\hat{v}_\theta(x_t, t))}_{\text{predicted } \hat{x}_0} + (t - \Delta t) \underbrace{(x_t + (1 - t)\hat{v}_\theta(x_t, t))}_{\text{predicted } \hat{x}_1} \\
+&= \underbrace{(1 - (t - \Delta t))}_{\text{coefficient of sample}} \hat{x}_0 + \underbrace{(t - \Delta t)}_{\text{coefficient of noise}}\hat{x}_1.  \tag 8
+\end{aligned}
+$$  
+
+所以流匹配中样本系数调度满足样本和噪声系数之和为1
+
+Flow-SDE采样更新公式如下：
+
+$$
+\begin{align*}
+  
+
+x_{t-\Delta t} &= x_t - \left[ \hat{v}_\theta(x_t, t) + \frac{\sigma_t^2}{2t} \left( x_t + (1 - t)\hat{v}_\theta(x_t, t) \right) \right] \Delta t + \sigma_t \sqrt{\Delta t} \epsilon \\
+&= x_t - \hat{v}_\theta(x_t, t) \Delta t - \frac{\sigma_t^2 \Delta t}{2t} \hat{x}_1 + \sigma_t \sqrt{\Delta t} \epsilon \quad // \hat{x}_1 = x_t + (1-t)\hat{v}_\theta(x_t, t)) \\
+&= (1-t)\hat{x}_0 + t\hat{x}_1 - (\hat{x}_1 - \hat{x}_0) \Delta t - \frac{\sigma_t^2 \Delta t}{2t} \hat{x}_1 + \sigma_t \sqrt{\Delta t} \epsilon \quad //公式8\\
+&= (1-t + \Delta t) \hat{x}_0 + \left( t - \Delta t - \frac{\sigma_t^2 \Delta t}{2t} \right) \hat{x}_1 + \sigma_t \sqrt{\Delta t} \epsilon \\
+
+\end{align*}
+$$
+
+
+该形式与DDIM采样公式结构类似，将下一步状态表示为预测初值$\hat{x}_0$和预测终值$\hat{x}_1$的线性组合，外加一个显式噪声项。
+
+**总噪声**:假设 $\hat{x}_1$ 服从标准高斯分布 $\mathcal{N}(0, I)$，且与 $\epsilon$ 独立，则 $x_{t-\Delta t}$ 中随机部分的方差为：
+$$
+\sigma_{\text{total}}^2 = \left( t - \Delta t - \frac{\sigma_t^2 \Delta t}{2t} \right)^2 + \sigma_t^2 \Delta t.
+$$
+
+展开并化简：
+
+$$
+\begin{aligned}
+\sigma_{\text{total}}^2 &= (t - \Delta t)^2 - 2(t - \Delta t) \frac{\sigma_t^2 \Delta t}{2t} + \left( \frac{\sigma_t^2 \Delta t}{2t} \right)^2 + \sigma_t^2 \Delta t \\
+&= (t - \Delta t)^2 - \frac{\sigma_t^2 \Delta t}{t} (t - \Delta t) + \left( \frac{\sigma_t^2 \Delta t}{2t} \right)^2 + \sigma_t^2 \Delta t \\
+&= (t - \Delta t)^2 + \sigma_t^2 \Delta t \left( 1 - \frac{t - \Delta t}{t} \right) + \left( \frac{\sigma_t^2 \Delta t}{2t} \right)^2 \\
+&= (t - \Delta t)^2 + \sigma_t^2 \Delta t \cdot \frac{\Delta t}{t} + \left( \frac{\sigma_t^2 \Delta t}{2t} \right)^2 \\
+&= (t - \Delta t)^2 + \left( \frac{\sigma_t \Delta t}{\sqrt{t}} \right)^2 + \left( \frac{\sigma_t^2 \Delta t}{2t} \right)^2.
+\end{aligned}
+$$
+
+
+因此，总噪声水平（标准差）为：
+$$
+\sigma_{\text{total}} = \sqrt{ (t - \Delta t)^2 + \left( \frac{\sigma_t \Delta t}{\sqrt{t}} \right)^2 + \left( \frac{\sigma_t^2 \Delta t}{2t} \right)^2 }.
+$$
+
+由于后两项非负，显然有：
+$$
+\sigma_{\text{total}} \geq \sqrt{(t - \Delta t)^2} = t - \Delta t.
+$$
+
+因此Flow-SDE的总噪声水平超过了前向过程中调度的噪声水平。
+
+![](../images/rl_flow_cps_fig2.jpg)
+
+### 解决方案
+
+**Flow-SDE的主要问题在于**，减少的噪声水平 $\frac{\sigma_t^2 \Delta t}{2t}$ 无法与新增的噪声水平 $\sigma_t \sqrt{\Delta t}$ 相匹配。注意到DDIM在采样过程中注入噪声的同时也保持了噪声水平（图3.b），我们考虑参考DDIM采样来解决此问题。假设新增噪声的方差为 $\sigma_t^2$，为满足CPS第二项条件的要求，预测噪声的系数应为 $\sqrt{(t - \Delta t)^2 - \sigma_t^2}$。这样，采样公式为：
+
+$$\boldsymbol{x}_{t-\Delta t} = (1 - (t - \Delta t)) \hat{\boldsymbol{x}}_0 + \sqrt{(t - \Delta t)^2 - \sigma_t^2} \hat{\boldsymbol{x}}_1 + \sigma_t \epsilon,$$
+
+其形式与带随机性的DDIM非常相似。
+
+对于噪声水平 $\sigma_t$，其最大值为 $t - \Delta t$，否则根号内会出现负的被开方数。为避免负的被开方数，我们提出设定 $\sigma_t = (t - \Delta t) \sin(\frac{\eta \pi}{2})$。此时采样公式变为：
+
+$$\boldsymbol{x}_{t-\Delta t} = (1 - (t - \Delta t)) \hat{\boldsymbol{x}}_0 + (t - \Delta t) \cos(\frac{\eta \pi}{2}) \hat{\boldsymbol{x}}_1 + (t - \Delta t) \sin(\frac{\eta \pi}{2}) \epsilon,$$
+
+其中 $\eta \in [0, 1]$ 控制随机强度。该公式满足CPS的要求，并具有如图3.d所示的直观几何解释。由于我们的采样算法基于CPS，故将其命名为Flow-CPS。
+
+为了使用GRPO进行训练，我们还需要定义 $p_\theta (\boldsymbol{x}_{t-1}^i |\boldsymbol{x}_t^i)$，其定义如下：
+
+$$\log p_\theta (\boldsymbol{x}_{t-1}^i |\boldsymbol{x}_t^i) = -\frac{\|\boldsymbol{x}_{t-\Delta t} - \mu_\theta (\boldsymbol{x}_t, t)\|^2}{2\sigma_t^2} - \log \sigma_t - \log \sqrt{2\pi},$$
+
+本文中，$\mu_\theta (\boldsymbol{x}_t, t) = (1 - (t - \Delta t)) \hat{\boldsymbol{x}}_0 + (t - \Delta t) \cos(\frac{\eta \pi}{2}) \hat{\boldsymbol{x}}_1$。对于每一步，$-\log \sigma_t - \log \sqrt{2\pi}$ 是一个常数值，在计算比值 $r_t^i (\theta) = \frac{p_\theta (\boldsymbol{x}_{t-1}^i |\boldsymbol{x}_t^i)}{p_{\theta \text{old}} (\boldsymbol{x}_{t-1}^i |\boldsymbol{x}_t^i)}$ 时会抵消。此外，我们去掉了分母中的 $\sigma_t$，以避免在最后时间步出现除以零或极小值的情况。因此，我们对数概率的定义简化为：
+
+$$\log p_\theta (\boldsymbol{x}_{t-1}^i |\boldsymbol{x}_t^i) = -\|\boldsymbol{x}_{t-1} - \mu_\theta (\boldsymbol{x}_t, t)\|^2.$$
+
+![](../images/rl_flow_cps_fig3.jpg)
 
 ## CFGRL
  [Diffusion Guidance Is a Controllable Policy Improvement Operator](https://arxiv.org/pdf/2505.23458)
