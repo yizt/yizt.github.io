@@ -195,7 +195,8 @@ dx_t &= \left( v_t(x_t) + \frac{\sigma_t^2}{2} \nabla \log p_t(x_t) - \sigma_t^2
 &=\left( v_t(x_t) - \frac{\sigma_t^2}{2} \nabla \log p_t(x_t) \right) dt + \sigma_t dw \tag{7}
 \end{align*} 
 $$  
-而对于通用的高斯概率路径$x_t \sim \mathcal{N}\left(x_t \mid \alpha_t x_0, \beta_t^2 I\right)$得分函数与速度场满足如下公式：
+而对于通用的高斯概率路径$x_t \sim \mathcal{N}\left(x_t \mid \alpha_t x_0, \beta_t^2 I\right)$得分函数与速度场满足如下公式： 
+
 $$
 \begin{align*}
 s_{t}(x)&=\frac{\alpha_{t}u_{t}(x)-\dot{\alpha}_{t}x}{\beta_{t}^{2}\dot{\alpha}_{t}-\alpha_{t}\dot{\beta}_{t}\beta_{t}} \\ 
@@ -203,20 +204,24 @@ s_{t}(x)&=\frac{\alpha_{t}u_{t}(x)-\dot{\alpha}_{t}x}{\beta_{t}^{2}\dot{\alpha}_
 &=\frac{(1-t)u_{t}(x)+x}{-t} \\
 &=-\frac{x}{t} -\frac{(1-t)u_{t}}{t}
 \end{align*} 
+$$  
 
-$$
-将上式带入公式7有
+将上式带入公式7有  
+
 $$
 \begin{equation*}
 dx_t = \left[ v_t(x_t) + \frac{\sigma_t^2}{2t} \bigl( x_t + (1-t)v_t(x_t) \bigr) \right] dt + \sigma_t dw \tag 8
 \end{equation*}
 $$
+
  为数值求解 SDE，采用 **Euler-Maruyama 离散化方法**，得到如下更新公式：
+
 $$
 \begin{equation*}
 \boldsymbol{x}_{t-\Delta t} = \boldsymbol{x}_t - \left[ v_\theta(\boldsymbol{x}_t, t) + \frac{\sigma_t^2}{2t}(\boldsymbol{x}_t + (1 - t)v_\theta(\boldsymbol{x}_t, t)) \right] \Delta t + \sigma_t\sqrt{\Delta t}\epsilon \tag 9 
 \end{equation*}
 $$
+
 注意：<span style='color:red'>原论文中公式是错误的,反向采样过程$t-\Delta t$,而不是$t+\Delta t$</span>
 
 
