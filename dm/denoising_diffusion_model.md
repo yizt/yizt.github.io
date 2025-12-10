@@ -14,24 +14,35 @@ nav_order: 2
 
 ### 扩散模型回顾
 
+
+根据你提供的文本内容，该图像描述了**扩散模型中的反向去噪过程**，并给出了对应的**反向时间随机微分方程（Reverse-time SDE）**。以下是内容的识别与说明：
+
+对于公式1定义的前向加噪过程
+\[
+dx = F_t x dt + G_t \, dw \tag 1
+\]
+
+ 其对应去燥反向过程的**随机微分方程（SDE）公式（2）如下:。
+\[
+dx = \left[ F_t x - G_t G_t^T \nabla \log p_t(x) \right] dt + G_t \, dw \tag 2
+\]
+
+其中：
+- \( F_i x \) 是**前向过程的漂移项**
+- \( G_i G_i^T \) 是**扩散系数的平方**
+- \( \nabla \log p_t(x) \) 是**得分函数**（score function）
+
+
+
+
 #### **Table 1: 两种常见的SDE（VPSDE与VESDE）**
 
-| SDE 类型（作者） | \(F_t\) | \(G_t\) | \(\mu_t\) | \(\Sigma_t\) |
-|---|---|---|---|---|
-| **VPSDE** (Ho et al., 2020) | \(\frac{1}{2} \frac{d \log \alpha_t}{dt} I\) | \(\sqrt{-\frac{d \log \alpha_t}{dt}} I\) | \(\sqrt{\alpha_t} I\) | \((1 - \alpha_t) I\) |
-| **VESDE** (Song et al., 2020b) | \(0\) | \(\sqrt{\frac{d [\sigma_t^2]}{dt}} I\) | \(I\) | \(\sigma_t^2 I\) |
+| SDE 类型 | \(F_t\) | \(G_t\) | \(\mu_t\) | \(\Sigma_t\) |
+|:---:|:---:|:---:|:---:|:---:|
+| **VPSDE** | \(\frac{1}{2} \frac{d \log \alpha_t}{dt} I\) | \(\sqrt{-\frac{d \log \alpha_t}{dt}} I\) | \(\sqrt{\alpha_t} I\) | \((1 - \alpha_t) I\) |
+| **VESDE** | \(0\) | \(\sqrt{\frac{d [\sigma_t^2]}{dt}} I\) | \(I\) | \(\sigma_t^2 I\) |
 
----
 
-#### **表格下方说明：**
 - 参数 \(\alpha_t\) 随时间递减，且 \(\alpha_0 \approx 1\)，\(\alpha_T \approx 0\)。
 - 参数 \(\sigma_t\) 随时间递增。
 
----
-
-### 📌 **总结说明：**
-- 该表格常见于**扩散模型（Diffusion Models）** 或**生成建模**相关论文中，用于描述**前向扩散过程**的两种不同SDE形式。
-- **VPSDE**（如DDPM中所用）强调**方差保持**，\(\alpha_t\) 控制信号衰减。
-- **VESDE**（如Score-based SDE中所用）允许**方差随时间增长**，\(\sigma_t\) 控制噪声幅度。
-
-如果需要进一步解释这些参数的意义或它们在扩散模型中的作用，我可以为你补充说明。
