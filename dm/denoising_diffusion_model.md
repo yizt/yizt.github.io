@@ -15,24 +15,22 @@ nav_order: 2
 ### 扩散模型回顾
 
 
-根据你提供的文本内容，该图像描述了**扩散模型中的反向去噪过程**，并给出了对应的**反向时间随机微分方程（Reverse-time SDE）**。以下是内容的识别与说明：
+ 根据你提供的文本内容，该图像描述了**扩散模型中的反向去噪过程**，并给出了对应的**反向时间随机微分方程（Reverse-time SDE）**。以下是内容的识别与说明：
 
 对于公式1定义的前向加噪过程
 \[
-dx = F_t x dt + G_t \, dw \tag 1
+d\boldsymbol{x} = \boldsymbol{F}_{t}\boldsymbol{x}dt + \boldsymbol{G}_{t}d\boldsymbol{w} \tag 1
 \]
 
  其对应去燥反向过程的**随机微分方程（SDE）公式（2）如下:。
 \[
-dx = \left[ F_t x - G_t G_t^T \nabla \log p_t(x) \right] dt + G_t \, dw \tag 2
+d\boldsymbol{x} = [\boldsymbol{F}_{t}\boldsymbol{x}- \boldsymbol{G}_{t}\boldsymbol{G}_{t}^{T}\nabla \log p_{t}(\boldsymbol{x})]dt + \boldsymbol{G}_{t}d\boldsymbol{w} \tag 2
 \]
 
 其中：
 - \( F_i x \) 是**前向过程的漂移项**
 - \( G_i G_i^T \) 是**扩散系数的平方**
 - \( \nabla \log p_t(x) \) 是**得分函数**（score function）
-
-
 
 
 #### **Table 1: 两种常见的SDE（VPSDE与VESDE）**
