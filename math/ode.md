@@ -76,18 +76,16 @@ $$
 $$  
 
 3. **代入原方程**： 
-
-
 $$
+\begin{equation}
 \begin{align*}
 C'(x) e^{-\int P(x) dx} - P(x) C(x) e^{-\int P(x) dx} + P(x) C(x) e^{-\int P(x) dx} &= Q(x) \\
 C'(x) e^{-\int P(x) dx} &= Q(x) \\
 C'(x) &= Q(x) e^{\int P(x) dx} \\
 C(x) &= \int Q(x) e^{\int P(x) dx} \, dx + C
 \end{align*}
+\end{equation}
 $$
-
-
 4. **通解**：
    \[
    y = e^{-\int P(x) dx} \left( \int Q(x) e^{\int P(x) dx} \, dx + C \right)
