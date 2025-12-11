@@ -32,8 +32,8 @@ nav_order: 2
 ### 变量替换法
 通过变量代换将方程化为可分离或线性方程。常见类型包括：
 
-**(1)齐次方程**
-形如 \(\frac{dy}{dx} = f\left(\frac{y}{x}\right)\)。  
+**齐次方程**
+形如 $\frac{dy}{dx} = f\left(\frac{y}{x}\right)$的微分方程。  
 令 \(v = \frac{y}{x}\)，则 \(y = vx\)，\(\frac{dy}{dx} = v + x \frac{dv}{dx}\)。  
 代入得：
 \[
@@ -46,8 +46,8 @@ v + x \frac{dv}{dx} = f(v)
 积分即可。
 
 **线性组合** 
-形如:\(\frac{dy}{dx} = f(ax+by+c)\)
-令 \(u = ax+by+c\)，则 \(\frac{du}{dx} = a + b \frac{dy}{dx} =a+bf(u)\)，代入后分离变量。
+形如:\(\frac{dy}{dx} = f(ax+by+c)\)  
+令 \(u = ax+by+c\)，则 \(\frac{du}{dx} = a + b \frac{dy}{dx} =a+bf(u)\)，代入后可分离变量。
 
 ### 常数变异法
 对于如下形式微分方程
@@ -73,8 +73,9 @@ $$
 \begin{equation*}
    \frac{dy_p}{dx} = C'(x) e^{-\int P(x) dx} - P(x) C(x) e^{-\int P(x) dx} 
 \end{equation*}
-$$
-3. **代入原方程**：
+$$  
+
+3. **代入原方程**： 
 $$
 \begin{align*}
 C'(x) e^{-\int P(x) dx} - P(x) C(x) e^{-\int P(x) dx} + P(x) C(x) e^{-\int P(x) dx} = Q(x) \\
@@ -85,7 +86,7 @@ C(x) = \int Q(x) e^{\int P(x) dx} \, dx + C
 $$
 
 
-4. **通解**：
+1. **通解**：
    \[
    y = e^{-\int P(x) dx} \left( \int Q(x) e^{\int P(x) dx} \, dx + C \right)
    \]
