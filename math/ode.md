@@ -199,9 +199,11 @@ $$
   b_1 = h\int_0^1 \prod_{\substack{m=0 \\ m \neq j}}^{k-1} \frac{m+\tau}{m-j} \, d\tau = h\int_0^1 \frac{0+\tau}{0-1} \, d\tau = -\frac {h} {2} \quad //k=2,j=1
   \]
 - **递推公式**：
-  \[
-  y_{n+1} = y_n + \frac{h}{2} \left[ 3f(t_n, y_n) - f(t_{n-1}, y_{n-1}) \right]
-  \]
+$$
+\begin{equation*}
+  y_{n+1} = y_n + \frac{h}{2} \left[ 3f(t_n, y_n) - f(t_{n-1}, y_{n-1}) \right]    
+\end{equation*}
+$$
 
 **四阶方法（AB4，k=4）**
 - **积分系数计算**： 
@@ -215,9 +217,12 @@ $$
 
   类似的可以算出$b_1=-\frac {59} {24}h,b_2=\frac {37} {24}h,b_3=-\frac {9} {24}h$
 - **递推公式**：
-  \[
+$$
+\begin{equation*}
   y_{n+1} = y_n + \frac{h}{24} \left[ 55f(t_n, y_n) - 59f(t_{n-1}, y_{n-1}) + 37f(t_{n-2}, y_{n-2}) - 9f(t_{n-3}, y_{n-3}) \right]
-  \]
+\end{equation*}
+$$
+
 
 #### **5. 关键特性**
 - **系数确定**：积分系数\(b_j\)由基函数在区间\([t_n, t_{n+1}]\)上的积分确定，需确保多项式在节点处精确匹配，并通过代数运算简化系数。
