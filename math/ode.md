@@ -75,7 +75,7 @@ $$
 \end{equation*}
 $$  
 
-3. **代入原方程**： </br>
+3. **代入原方程**： 
 $$
 \begin{align*}
 C'(x) e^{-\int P(x) dx} - P(x) C(x) e^{-\int P(x) dx} + P(x) C(x) e^{-\int P(x) dx} &= Q(x) \\
