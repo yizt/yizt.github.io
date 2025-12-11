@@ -76,17 +76,19 @@ $$
 $$  
 
 3. **代入原方程**： 
+
+
 $$
 \begin{align*}
-C'(x) e^{-\int P(x) dx} - P(x) C(x) e^{-\int P(x) dx} + P(x) C(x) e^{-\int P(x) dx} = Q(x) \\
-C'(x) e^{-\int P(x) dx} = Q(x) \\
-C'(x) = Q(x) e^{\int P(x) dx} \\
-C(x) = \int Q(x) e^{\int P(x) dx} \, dx + C
+C'(x) e^{-\int P(x) dx} - P(x) C(x) e^{-\int P(x) dx} + P(x) C(x) e^{-\int P(x) dx} &= Q(x) \\
+C'(x) e^{-\int P(x) dx} &= Q(x) \\
+C'(x) &= Q(x) e^{\int P(x) dx} \\
+C(x) &= \int Q(x) e^{\int P(x) dx} \, dx + C
 \end{align*}
 $$
 
 
-1. **通解**：
+4. **通解**：
    \[
    y = e^{-\int P(x) dx} \left( \int Q(x) e^{\int P(x) dx} \, dx + C \right)
    \]
@@ -117,9 +119,11 @@ $$
    \]
 
 3. **乘以积分因子**：
-   \[
-   \frac{d}{dx} \left[ \mu(x) y \right] = \mu(x) Q(x)
-   \]
+$$
+\begin{equation*}
+\frac{d}{dx} \left[ \mu(x) y \right] = \mu(x) Q(x)
+\end{equation*}
+$$
 
 4. **积分求解**：
    \[
