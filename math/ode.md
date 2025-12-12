@@ -164,21 +164,22 @@ P_n(x) = a_0 + a_1(x-x_0) + a_2(x-x_0)(x-x_1) + \cdots + a_n(x-x_0)(x-x_1)\cdots
 差商（Divided Difference）是递归定义的：
 
 1. **零阶差商（函数值）**：
-   \[
-   f[x_i] = f(x_i) = y_i
-   \]
 
-2. **一阶差商**：
-   \[
+$$f[x_i] = f(x_i) = y_i$$
+
+1. **一阶差商**：
+$$
    f[x_i, x_j] = \frac{f[x_j] - f[x_i]}{x_j - x_i}
-   \]
+$$
 
-3. **二阶差商**：
-   \[
+2. **二阶差商**：
+$$
+\begin{equation*}
    f[x_i, x_j, x_k] = \frac{f[x_j, x_k] - f[x_i, x_j]}{x_k - x_i}
-   \]
+\end{equation*}
+$$
 
-4. **k阶差商（递归定义）**：
+1. **k阶差商（递归定义）**：
    \[
    f[x_0, x_1, \dots, x_k] = \frac{f[x_1, \dots, x_k] - f[x_0, \dots, x_{k-1}]}{x_k - x_0}
    \]
