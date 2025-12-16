@@ -7,7 +7,7 @@ nav_order: 4
 # 流匹配
 
 ## 流匹配基础
- 本节所有内容均节选自[AnIntroductiontoFlowMatchingandDiffusionModels](https://diffusion.csail.mit.edu/docs/lecture-notes.pdf)
+ 本节所有内容均节选自[An Introduction to Flow Matching and Diffusion Models](https://diffusion.csail.mit.edu/docs/lecture-notes.pdf)
 
 ### 流模型定义
 
@@ -199,5 +199,88 @@ $$
 
  至此已经证明流匹配损失与条件流匹配损是等价的，它们仅相差常数项，而条件流匹配损失中的条件向量场是容易计算的。因此流匹配训练目标直接使用<span style="color: red;">公式43定义的条件流匹配损失</span>。
 
+### Score Matching
+ 同样的方式可以定义条件得分(conditional score)和边缘得分(marginal score).
+
+\(\nabla \log p_t(x)\) 是**边缘得分(marginal score)** 函数定义如下:
+\[\nabla \log p_t(x) = \int \nabla \log p_t(x|z) \frac{p_t(x|z)p_{\text{data}}(z)}{p_t(x)} dz. \tag{51}\]
+ \(\nabla \log p_t\), 可以使用一个称为得分网络**score network**\( s_t^\theta : \mathbb{R}^d \times [0, 1] \rightarrow \mathbb{R}^d \) 的神经网络来近似，类似向量场定义**score matching** 损失和 **conditional score matching** 损失如下:
+$$
+\begin{align*}
+\mathcal{L}_{\text{SM}}(\theta) &= \mathbb{E}_{t \sim \text{Unif}, z \sim p_{\text{data}}, x \sim p_t(\cdot |z)}[||s_t^\theta(x) - \nabla \log p_t(x)||^2] \quad \Rightarrow \quad \text{score matching loss} \\
+\mathcal{L}_{\text{CSM}}(\theta) &= \mathbb{E}_{t \sim \text{Unif}, z \sim p_{\text{data}}, x \sim p_t(\cdot |z)}[||s_t^\theta(x) - \nabla \log p_t(x)||^2] \quad \Rightarrow \quad \text{conditional score matching loss}
+\end{align*}
+$$
+ 边缘得分损失与条件得分损失仍然等价.
+
+**定理20**
+
+得分匹配损失与条件得分匹配损失之间相差一个常数：:
+\[\mathcal{L}_{\text{SM}}(\theta) = \mathcal{L}_{\text{CSM}}(\theta) + C,\]
+ \(C\) 与参数 \(\theta\)无关. 因此，它们的梯度一致:
+\[\nabla_\theta \mathcal{L}_{\text{SM}}(\theta) = \nabla_\theta \mathcal{L}_{\text{CSM}}(\theta).\]
+
+**证明.** 注意 \(\nabla \log p_t\) 的公式与 \(u_t^{\text{target}}\) 的公式形式相同，证明过程完全一样。
+
 ### 常用的条件流向量场
  目前已知流匹配的训练目标只需要计算条件向量场即可，那么对于常用的高斯概率路径
+
+**条件速度场**
+
+ 对于通用噪声调度 $\alpha_t, \beta_t$，条件为数据点z的分布为 $ p_t(\cdot\mid z) = \mathcal{N}(\alpha_t z, \beta_t^2 I_d) $。令 $ \dot{\alpha}_t = \partial_t \alpha_t $ 和 $ \dot{\beta}_t = \partial_t \beta_t $ 分别表示 $\alpha_t$ 和 $\beta_t$ 的时间导数，则条件速度场$u_t^{\text{target}}(x\mid z)$。
+$$
+\begin{align*}
+  u_t^{\text{target}}(x|z) &= \frac{dx}{dt} \\
+  &= \frac{d}{dt} (\alpha_t z + \beta_t x_0) \quad //x=\alpha_t z + \beta_t x_0, x_0 \in \\ x=\mathcal{N}(\mathcal{0}, I_d) \\
+  &=\dot{\alpha}_t z + \dot{\beta}_t x_0 \\
+  &=\dot{\alpha}_t z + \dot{\beta}_t (\frac {x-\alpha_t z} {\beta_t}) \\
+  &=\left( \dot{\alpha}_t - \frac{\dot{\beta}_t}{\beta_t} \alpha_t \right) z + \frac{\dot{\beta}_t}{\beta_t} x
+\end{align*}
+$$
+
+**条件得分**
+
+ 对于条件高斯路径 $p_t(x\mid z) = \mathcal{N}(\alpha_t z, \beta_t^2 I_d)$, 其条件得分为：
+
+$$
+\begin{equation*}
+  \nabla \log p_t(x|z) = -\frac{x - \alpha_t z}{\beta_t^2}
+\end{equation*}
+$$
+
+**条件速度场与条件得分的关系**
+对于条件向量场和条件得分，我们可以推导出：
+$$
+\begin{align*}
+u_{t}^{\text{target}}(x|z) &= \left( \dot{\alpha}_{t} - \frac{\dot{\beta}_{t}}{\beta_{t}} \alpha_{t} \right) z + \frac{\dot{\beta}_{t}}{\beta_{t}} x \\
+&= \left( \beta_{t}^{2} \frac{\dot{\alpha}_{t}}{\alpha_{t}} - \dot{\beta}_{t} \beta_{t} \right) \left( \frac{\alpha_{t} z - x}{\beta_{t}^{2}} \right) + \frac{\dot{\alpha}_{t}}{\alpha_{t}} x \quad //展开\dot{\alpha_tz} -\frac {\dot{\alpha_t}} {\alpha_t}x - \frac {\dot{\beta_t}}{\beta_t} \alpha_tz + \frac{\dot{\beta}_{t}}{\beta_{t}} x + \frac{\dot{\alpha}_{t}}{\alpha_{t}} x 与上市相等\\
+&= \left( \beta_{t}^{2} \frac{\dot{\alpha}_{t}}{\alpha_{t}} - \dot{\beta}_{t} \beta_{t} \right) \nabla \log p_{t}(x|z) + \frac{\dot{\alpha}_{t}}{\alpha_{t}} x \quad //条件得分函数
+\end{align*}
+$$
+
+**边缘得分与边缘速度场关系**
+  通过积分，同样的恒等式对于边际流向量场和边际得分函数也成立：
+$$
+\begin{align*}
+u_{t}^{\text{target}}(x) &= \int u_{t}^{\text{target}}(x|z) \frac{p_{t}(x|z) p_{\text{data}}(z)}{p_{t}(x)} dz \\
+&= \int \left[ \left( \beta_{t}^{2} \frac{\dot{\alpha}_{t}}{\alpha_{t}} - \dot{\beta}_{t} \beta_{t} \right) \nabla \log p_{t}(x|z) + \frac{\dot{\alpha}_{t}}{\alpha_{t}} x \right] \frac{p_{t}(x|z) p_{\text{data}}(z)}{p_{t}(x)} dz \\
+&= \left( \beta_{t}^{2} \frac{\dot{\alpha}_{t}}{\alpha_{t}} - \dot{\beta}_{t} \beta_{t} \right)\int  \nabla \log p_{t}(x|z) \frac{p_{t}(x|z) p_{\text{data}}(z)}{p_{t}(x)} dz + \frac{\dot{\alpha}_{t}}{\alpha_{t}} x \int \frac{p_{t}(x|z) p_{\text{data}}(z)}{p_{t}(x)} dz \quad //不含z的常数放到积分外边\\
+&= \left( \beta_{t}^{2} \frac{\dot{\alpha}_{t}}{\alpha_{t}} - \dot{\beta}_{t} \beta_{t} \right) \nabla \log p_{t}(x) + \frac{\dot{\alpha}_{t}}{\alpha_{t}} x \quad //边缘得分定义及\int \frac{p_{t}(x|z) p_{\text{data}}(z)}{p_{t}(x)} dz=1
+\end{align*}
+$$
+
+可以使用转换公式将分数网络 \( s_t^\theta \) 与向量场网络 \( u_t^\theta \) 通过以下方式相互参数化：
+
+\[
+u_t^\theta = \left( \beta_t^2 \frac{\dot{\alpha}_t}{\alpha_t} - \dot{\beta}_t \beta_t \right) s_t^\theta (x) + \frac{\dot{\alpha}_t}{\alpha_t} x. \tag{54}
+\]
+
+类似地，只要 \( \beta_t^2 \dot{\alpha}_t - \alpha_t \dot{\beta}_t \beta_t \neq 0 \)（对于 \( t \in [0,1] \) 始终成立），则有
+
+\[
+s_t^\theta (x) = \frac{\alpha_t u_t^\theta (x) - \dot{\alpha}_t x}{\beta_t^2 \dot{\alpha}_t - \alpha_t \dot{\beta}_t \beta_t}. \tag{55}
+\]
+
+因此<span style='color:red'>无需同时训练向量场网络和得分网络,训练了其中任意个,另一个可通过已训练网络转换，公式54和55表示了它们的转换关系</span>。
+
+Rectified Flow、MeanFlow、Consistency-FM、Shortcut Model，OT-CFM
