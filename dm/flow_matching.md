@@ -249,6 +249,7 @@ $$
 $$
 
 **条件速度场与条件得分的关系**
+
 对于条件向量场和条件得分，我们可以推导出：
 $$
 \begin{align*}
@@ -259,6 +260,7 @@ u_{t}^{\text{target}}(x|z) &= \left( \dot{\alpha}_{t} - \frac{\dot{\beta}_{t}}{\
 $$
 
 **边缘得分与边缘速度场关系**
+
   通过积分，同样的恒等式对于边际流向量场和边际得分函数也成立：
 $$
 \begin{align*}
@@ -272,7 +274,7 @@ $$
 可以使用转换公式将分数网络 \( s_t^\theta \) 与向量场网络 \( u_t^\theta \) 通过以下方式相互参数化：
 
 \[
-u_t^\theta = \left( \beta_t^2 \frac{\dot{\alpha}_t}{\alpha_t} - \dot{\beta}_t \beta_t \right) s_t^\theta (x) + \frac{\dot{\alpha}_t}{\alpha_t} x. \tag{54}
+u_t^\theta(x) = \left( \beta_t^2 \frac{\dot{\alpha}_t}{\alpha_t} - \dot{\beta}_t \beta_t \right) s_t^\theta (x) + \frac{\dot{\alpha}_t}{\alpha_t} x. \tag{54}
 \]
 
 类似地，只要 \( \beta_t^2 \dot{\alpha}_t - \alpha_t \dot{\beta}_t \beta_t \neq 0 \)（对于 \( t \in [0,1] \) 始终成立），则有
@@ -282,5 +284,16 @@ s_t^\theta (x) = \frac{\alpha_t u_t^\theta (x) - \dot{\alpha}_t x}{\beta_t^2 \do
 \]
 
 因此<span style='color:red'>无需同时训练向量场网络和得分网络,训练了其中任意个,另一个可通过已训练网络转换，公式54和55表示了它们的转换关系</span>。
+
+注意到$\frac {d} {dt} ln(\alpha_t) = \frac{\dot{\alpha}_t}{\alpha_t}$及$\frac {d} {dt} ln(\beta_t) = \frac{\dot{\beta_t}}{\beta_t}$，公式54也可以写为如下公式: 
+
+$$
+\begin{align*}
+u_t^\theta(x) &= \left( \beta_t^2 \frac{\dot{\alpha}_t}{\alpha_t} - \dot{\beta}_t \beta_t \right) s_t^\theta (x) + \frac{\dot{\alpha}_t}{\alpha_t} x. \tag{54} \\
+&= \beta_t^2 \left( \frac{\dot{\alpha}_t}{\alpha_t} - \frac {\dot{\beta}_t} {\beta_t} \right) s_t^\theta (x) + \frac{\dot{\alpha}_t}{\alpha_t} x. \\
+&= \beta_t^2 \left( \frac {d} {dt} ln(\alpha_t) - \frac {d} {dt} ln(\beta_t)  \right) s_t^\theta (x) + \frac {d} {dt} ln(\alpha_t) x. \\
+&=\beta_t^2  \frac {d} {dt} ln(\frac {\alpha_t} {\beta_t})  s_t^\theta (x) + \frac {d} {dt} ln(\alpha_t) x.
+\end{align*}
+$$
 
 Rectified Flow、MeanFlow、Consistency-FM、Shortcut Model，OT-CFM
