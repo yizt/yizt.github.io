@@ -289,10 +289,10 @@ s_t^\theta (x) = \frac{\alpha_t u_t^\theta (x) - \dot{\alpha}_t x}{\beta_t^2 \do
 
 $$
 \begin{align*}
-u_t^\theta(x) &= \left( \beta_t^2 \frac{\dot{\alpha}_t}{\alpha_t} - \dot{\beta}_t \beta_t \right) s_t^\theta (x) + \frac{\dot{\alpha}_t}{\alpha_t} x. \tag{54} \\
-&= \beta_t^2 \left( \frac{\dot{\alpha}_t}{\alpha_t} - \frac {\dot{\beta}_t} {\beta_t} \right) s_t^\theta (x) + \frac{\dot{\alpha}_t}{\alpha_t} x. \\
-&= \beta_t^2 \left( \frac {d} {dt} ln(\alpha_t) - \frac {d} {dt} ln(\beta_t)  \right) s_t^\theta (x) + \frac {d} {dt} ln(\alpha_t) x. \\
-&=\beta_t^2  \frac {d} {dt} ln(\frac {\alpha_t} {\beta_t})  s_t^\theta (x) + \frac {d} {dt} ln(\alpha_t) x.
+u_t^\theta(x) &= \left( \beta_t^2 \frac{\dot{\alpha}_t}{\alpha_t} - \dot{\beta}_t \beta_t \right) s_t^\theta (x) + \frac{\dot{\alpha}_t}{\alpha_t} x \tag{54} \\
+&= \beta_t^2 \left( \frac{\dot{\alpha}_t}{\alpha_t} - \frac {\dot{\beta}_t} {\beta_t} \right) s_t^\theta (x) + \frac{\dot{\alpha}_t}{\alpha_t} x \\
+&= \beta_t^2 \left( \frac {d ln(\alpha_t)} {dt}  - \frac {d ln(\beta_t)} {dt}  \right) s_t^\theta (x) + \frac {d ln(\alpha_t)} {dt} x \\
+&=\beta_t^2  \frac {d ln(\frac {\alpha_t} {\beta_t})} {dt}   s_t^\theta (x) + \frac {d ln(\alpha_t)} {dt} x
 \end{align*}
 $$
 
