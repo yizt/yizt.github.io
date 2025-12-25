@@ -289,7 +289,7 @@ $$
 ![算法1](../images/dm_tfliivf_alg1.jpg)  
  
   对于OT路径$\alpha_t=t,\beta_t=1-t$ 速度场:  
-  
+
 $$
 \begin{align*}
 \hat{v} &= \left( \alpha_t \frac{\mathrm{d} \ln(\alpha_t / \sigma_t)}{\mathrm{d}t} \right) \hat{x}_1 + \frac{\mathrm{d} \ln \sigma_t}{\mathrm{d}t} x_t \tag 8 \\
@@ -318,6 +318,24 @@ $$
  预训练的速度场，仅增加引导项
 ![算法3](../images/dm_tfliivf_alg3.jpg)
 
+### RTC
+ [Real-Time Execution of Action Chunking Flow Policies](https://arxiv.org/pdf/2506.07339)
+
+\[
+\mathbf{v}_{{\text{IIGDM}}}(\mathbf{A}_t^{\tau}, \mathbf{o}_t, \tau) = \mathbf{v}(\mathbf{A}_t^{\tau}, \mathbf{o}_t, \tau) + \min\left(\beta, \frac{1 - \tau}{\tau \cdot r_\tau^2}\right)\left(\mathbf{Y} - \widehat{\mathbf{A}_t^1}\right)^\top \text{diag}(\mathbf{W}) \frac{\partial \widehat{\mathbf{A}_t^1}}{\partial \mathbf{A}_t^\tau}
+\]
+
+其中，
+
+\[
+\widehat{\mathbf{A}_t^1} = \mathbf{A}_t^\tau + (1 - \tau)\mathbf{v}(\mathbf{A}_t^\tau, \mathbf{o}_t, \tau),
+\]
+
+\[
+r_\tau^2 = \frac{(1 - \tau)^2}{\tau^2 + (1 - \tau)^2}.
+\]
+
+注意：在RTC中样本值到观测值为恒等映射。$\mathbf{W}$为引导权重,$\beta$是裁剪因子
 
 ### 参考
 
