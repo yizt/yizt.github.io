@@ -88,12 +88,13 @@ $$
 
 ## TRAINING-FREE LINEAR IMAGE INVERSES VIA FLOWS
  [TRAINING-FREE LINEAR IMAGE INVERSES VIA FLOWS](http://arxiv.org/pdf/2310.04432)
+ 将TRAINING-FREE的引导生成从扩散模型引入流匹配模型，并提出一种基于条件最优传输(OT)路径的求解器方案。无需重新训练可适用到现有的扩散模型中。
 
 高斯概率路径:
 \[
 q(\mathbf{x}_t|\mathbf{y}, \mathbf{x}_1) = q(\mathbf{x}_t|\mathbf{x}_1) = \mathcal{N}(\alpha_t \mathbf{x}_1, \sigma_t^2 \mathbf{I}) \tag 5
 \]  
- 其中$x_0为纯噪声,x_1为数据分布,\alpha_t=1-t,\sigma_t=t$。
+ 其中$x_0为纯噪声,x_1为数据分布,对于OT概率路径有: \alpha_t=1-t,\sigma_t=t$。
 
 测量值y定义如下:
 \[
@@ -135,7 +136,12 @@ $$
 \widehat{\boldsymbol{v}}(\boldsymbol{x}_t, \boldsymbol{y}) = \widehat{\boldsymbol{v}}(\boldsymbol{x}_t) + \sigma_t^2 \frac{d \ln(\alpha_t/\sigma_t)}{dt} \gamma_t \nabla_{\boldsymbol{x}_t} \ln q^{app}(\boldsymbol{y}|\boldsymbol{x}_t) \tag {12}
 \end{equation}
 $$
-其中$\gamma_t$​ 是一个权重因子，用于调整公式(12)中引导项的强度。  
+  其中$\gamma_t$​ 是一个权重因子，用于调整公式(12)中引导项的强度。  
+
+  本文假设**先验分布**也是标准高斯分布 $q(x_1) \sim \mathcal{N}(0, I)$,(<span style='color:red'>这是一个很强的假设,显然先验数据分布不会是高斯分布</span>)。 则后验分布的方差为(后面会证明): 
+\[
+r_t^2 = \frac{\sigma_t^2}{\sigma_t^2 + \alpha_t^2} \tag {13}
+\]
 
 ### 后验分布 \(q(x_1|x_t)\) 推导
  推导基于一个标准的**贝叶斯推断**过程：已知**先验分布** \(q(x_1)\) 和**似然函数** \(q(x_t|x_1)\)，求解**后验分布** \(q(x_1|x_t)\) 的方差参数 \(r_t^2\)。其核心原因是**高斯分布的共轭性质**。
@@ -180,6 +186,101 @@ $$
 & \text{后验均值：} \quad \widehat{x}_1(x_t) = \frac{\alpha_t}{\sigma_t^2 + \alpha_t^2} x_t
 \end{aligned}
 $$
+
+### 不同概率路径的等价性
+**引理 2**. 考虑两条高斯概率路径 q 和 q′，它们由公式 5 定义，均值和标准差分别为$\alpha_t,\sigma_t$ 和 $\alpha'_t,\sigma'_t$。 定义 t′(t) 为给定 t 时，使得 $\alpha_t/\sigma_t=\alpha'_t/\sigma'_t$ 的唯一解。则: 
+\[
+\mathbb{E}_q[\mathbf{x}_1|\mathbf{x}_t, \mathbf{y}] = \mathbb{E}_{q'}[\mathbf{x}_1|\mathbf{X}'_{t'(t)} = \alpha'_{t'(t)}\mathbf{x}_t/\alpha_t, \mathbf{y}] \tag 9
+\]
+  这使得我们可以用**任意一种噪声调度的模型**（如预训练的模型）来模拟另一种噪声调度模型的推理过程，**无需重新训练模型**。
+
+证明:  
+**1. 共享先验分布**
+\[
+q(x_1|y) = q'(x_1|y)
+\]
+ 即两个路径在给定条件 \( y \) 下，关于 \( x_1 \) 的先验分布相同。
+
+**2. 转移概率的等价性**
+对于高斯路径，转移概率密度为：
+\[
+q(x_t|x_1, y) = \mathcal{N}(x_t; \alpha_t x_1, \sigma_t^2 I) \\
+\Leftrightarrow x_{t} = \alpha_{t} x_1 + \sigma_{t} z \\
+\Leftrightarrow \frac{x_t}{\alpha_t} = x_1 + \frac{\sigma_t}{\alpha_t} z
+\]
+类似地:  
+\[
+q'(x_{t'}|x_1, y) = \mathcal{N}(x_{t'}; \alpha_{t'}' x_1, \sigma_{t'}'^2 I) \\
+\Leftrightarrow x_{t'}' = \alpha_{t'}' x_1 + \sigma_{t'}' z \\
+\Leftrightarrow \frac{x_{t'}'}{\alpha_{t'}'} = x_1 + \frac{\sigma_{t'}'}{\alpha_{t'}'} z
+\]
+
+当 \( t' = t'(t) \) 满足：
+\[
+\frac{\sigma_t}{\alpha_t} = \frac{\sigma_{t'}'}{\alpha_{t'}'}
+\]
+
+可以建立对应关系：
+\[
+x_{t'(t)}' = \frac{\alpha_{t'(t)}'}{\alpha_t} x_t
+\]
+两者在给定 \( x_1, y \) 时具有相同的分布形式。
+
+因此，在概率密度意义上：
+\[
+q(x_t|x_1, y) = q'\left( x_{t'(t)}' = \frac{\alpha_{t'(t)}'}{\alpha_t} x_t \,\bigg|\, x_1, y \right)
+\]
+即两个转移概率在重新缩放后一致。
+
+
+**3. 联合分布相同**
+由于先验 \( q(x_1|y) = q'(x_1|y) \) 且转移概率在对应时间点等价（经缩放），因此联合分布满足：
+\[
+q(x_t, x_1 | y) = q'(x_{t'(t)}', x_1 | y)
+\]
+在对应变量替换下一致。
+
+**4. 条件期望相等**
+条件期望 \( \mathbb{E}[x_1|x_t, y] \) 完全由联合分布 \( q(x_1, x_t | y) \) 决定。既然两个路径的联合分布在对应点相同，它们的条件期望也应相同：
+
+\[
+\mathbb{E}_q[x_1|x_t, y] = \mathbb{E}_{q'}[x_1|x_{t'(t)}', y]
+\]
+
+由于信噪比相同，两个路径的线性系数一致，且缩放因子 \( \alpha_{t'(t)}' / \alpha_t \) 来自变量对应关系 \( x_{t'(t)}' = \frac{\alpha_{t'(t)}'}{\alpha_t} x_t \)。
+
+ 
+### 算法流程
+#### 算法1
+  预训练的去噪网络,通过条件OT概率路径流获取引导后的样本
+![算法1](../images/dm_tfliivf_alg1.jpg)
+ 对于OT路径$\alpha_t=t,\beta_t=1-t$有:  
+$$
+\begin{align*}
+\hat{v} &= \left( \alpha_t \frac{\mathrm{d} \ln(\alpha_t / \sigma_t)}{\mathrm{d}t} \right) \hat{x}_1 + \frac{\mathrm{d} \ln \sigma_t}{\mathrm{d}t} x_t \tag 8 \\
+&= \left( t \frac{\mathrm{d} \ln(t / (1-t))}{\mathrm{d}t} \right) \hat{x}_1 + \frac{\mathrm{d} \ln (1-t)}{\mathrm{d}t} x_t  \quad// \alpha_t=t,\beta_t=1-t \\
+&=t(\frac 1 t - \frac {-1} {1-t})\hat{x}_1+\frac {-1} {1-t}x_t \\
+&=\frac {\hat{x}_1} {1-t} - \frac {x_t} {1-t}
+\end{align*}
+$$  
+
+$$
+\begin{align*}
+\sigma_t^2 \frac{\mathrm{d} \ln(\alpha_t / \sigma_t)} {dt} &=  (1-t)^2\frac{\mathrm{d} \ln(t / (1-t))}{\mathrm{d}t} \\
+&=(1-t)^2(\frac 1 t - \frac {-1} {1-t}) \\
+&=(1-t)^2 \frac 1 {t(1-t)} \\
+&=\frac {1-t} {t}
+\end{align*}
+$$
+
+#### 算法2
+ 预训练的去噪网络,通过等价的概率路径流获取引导后的样本
+![算法2](../images/dm_tfliivf_alg2.jpg)
+ 
+#### 算法3
+ 预训练的速度场，仅增加引导项
+![算法3](../images/dm_tfliivf_alg3.jpg)
+
 
 ### 参考
 
