@@ -45,7 +45,9 @@ p_t(\mathbf{x}_0|\mathbf{x}_t) \approx \mathcal{N}(\hat{\mathbf{x}}_t, r_t^2 \ma
 \]
 均值使用Tweedie公式估计:  
 $$
+\begin{equation*}
 \hat{\mathbf{x}}_t = \mathbb{E}[\mathbf{x}_0 | \mathbf{x}_t] = \mathbf{x}_t + \sigma_t^2 \nabla_{\mathbf{x}_t} \log p_t(\mathbf{x}_t) \approx \mathbf{x}_t + \sigma_t^2 S_\theta(\mathbf{x}; \sigma_t).  \tag 5
+\end{equation*}
 $$  
 
  其中$p_t(\mathbf{x}_t \vert \mathbf{x}_0) \sim \mathcal{N}({\mathbf{x}}_0, \sigma_t^2 \mathbf{I})$,注意:<span style='color:red'>$r_t$与$\sigma_t$不同</span>  
@@ -140,9 +142,9 @@ $$
 
 #### 推导步骤与假设
 推导基于以下三个关键假设：
-1.  **数据先验分布**：\(q(x_1) = \mathcal{N}(x_1; 0, I)\)。这是推导的**起点**，也是得出简洁解析解 \(r_t^2 = \frac{\sigma_t^2}{\sigma_t^2 + \alpha_t^2}\) 的原因。
-2.  **扩散前向过程**：\(q(x_t \vert x_1) = \mathcal{N}(x_t; \alpha_t x_1, \sigma_t^2 I)\)。这是扩散模型的标准参数化形式，其中 \(\alpha_t\) 和 \(\sigma_t\) 是已知的时间依赖函数。
-3.  **后验分布形式**：根据高斯共轭性，后验 \(q(x_1 \vert x_t)\) 也是高斯分布，我们将其参数化为 \(\mathcal{N}(x_1; \widehat{x}_1(x_t), r_t^2 I)\)。其中 \(\widehat{x}_1(x_t)\) 是后验均值，\(r_t^2\) 是待求的后验方差标量。
+1.  **数据先验分布**：$q(x_1) = \mathcal{N}(x_1; 0, I)$。这是推导的**起点**，也是得出简洁解析解 \(r_t^2 = \frac{\sigma_t^2}{\sigma_t^2 + \alpha_t^2}\) 的原因。
+2.  **扩散前向过程**：$q(x_t \vert x_1) = \mathcal{N}(x_t; \alpha_t x_1, \sigma_t^2 I)$。这是扩散模型的标准参数化形式，其中 \(\alpha_t\) 和 \(\sigma_t\) 是已知的时间依赖函数。
+3.  **后验分布形式**：根据高斯共轭性，后验 \(q(x_1 \vert x_t)\) 也是高斯分布，我们将其参数化为 $\mathcal{N}(x_1; \widehat{x}_1(x_t), r_t^2 I)$。其中 \(\widehat{x}_1(x_t)\) 是后验均值，\(r_t^2\) 是待求的后验方差标量。
 
 下面是详细的推导过程：
 
