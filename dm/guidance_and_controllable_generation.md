@@ -188,10 +188,12 @@ $$
 $$
 
 ### 不同概率路径的等价性
-**引理 2**. 考虑两条高斯概率路径 q 和 q′，它们由公式 5 定义，均值和标准差分别为$\alpha_t,\sigma_t$ 和 $\alpha'_t,\sigma'_t$。 定义 t′(t) 为给定 t 时，使得 $\alpha_t/\sigma_t=\alpha'_t/\sigma'_t$ 的唯一解。则: 
-\[
+**引理 2**. 考虑两条高斯概率路径 q 和 q′，它们由公式 5 定义，均值和标准差分别为$\alpha_t,\sigma_t$ 和 $\alpha_t',\sigma_t'$。 定义 t′(t) 为给定 t 时，使得 $\alpha_t/\sigma_t=\alpha_t'/\sigma_t'$ 的唯一解。则: 
+$$
+\begin{equation*}
 \mathbb{E}_q[\mathbf{x}_1|\mathbf{x}_t, \mathbf{y}] = \mathbb{E}_{q'}[\mathbf{x}_1|\mathbf{X}'_{t'(t)} = \alpha'_{t'(t)}\mathbf{x}_t/\alpha_t, \mathbf{y}] \tag 9
-\]
+\end{equation*}
+$$
   这使得我们可以用**任意一种噪声调度的模型**（如预训练的模型）来模拟另一种噪声调度模型的推理过程，**无需重新训练模型**。
 
 证明:  
@@ -243,9 +245,11 @@ q(x_t, x_1 | y) = q'(x_{t'(t)}', x_1 | y)
 **4. 条件期望相等**
 条件期望 \( \mathbb{E}[x_1|x_t, y] \) 完全由联合分布 \( q(x_1, x_t | y) \) 决定。既然两个路径的联合分布在对应点相同，它们的条件期望也应相同：
 
-\[
+$$
+\begin{equation*}
 \mathbb{E}_q[x_1|x_t, y] = \mathbb{E}_{q'}[x_1|x_{t'(t)}', y]
-\]
+\end{equation*}
+$$
 
 由于信噪比相同，两个路径的线性系数一致，且缩放因子 \( \alpha_{t'(t)}' / \alpha_t \) 来自变量对应关系 \( x_{t'(t)}' = \frac{\alpha_{t'(t)}'}{\alpha_t} x_t \)。
 
@@ -253,8 +257,9 @@ q(x_t, x_1 | y) = q'(x_{t'(t)}', x_1 | y)
 ### 算法流程
 #### 算法1
   预训练的去噪网络,通过条件OT概率路径流获取引导后的样本
-![算法1](../images/dm_tfliivf_alg1.jpg)
- 对于OT路径$\alpha_t=t,\beta_t=1-t$有:  
+![算法1](../images/dm_tfliivf_alg1.jpg)  
+ 
+  对于OT路径$\alpha_t=t,\beta_t=1-t$ 速度场:  
 $$
 \begin{align*}
 \hat{v} &= \left( \alpha_t \frac{\mathrm{d} \ln(\alpha_t / \sigma_t)}{\mathrm{d}t} \right) \hat{x}_1 + \frac{\mathrm{d} \ln \sigma_t}{\mathrm{d}t} x_t \tag 8 \\
@@ -263,7 +268,7 @@ $$
 &=\frac {\hat{x}_1} {1-t} - \frac {x_t} {1-t}
 \end{align*}
 $$  
-
+引导系数:
 $$
 \begin{align*}
 \sigma_t^2 \frac{\mathrm{d} \ln(\alpha_t / \sigma_t)} {dt} &=  (1-t)^2\frac{\mathrm{d} \ln(t / (1-t))}{\mathrm{d}t} \\
