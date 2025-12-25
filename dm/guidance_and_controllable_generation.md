@@ -13,9 +13,11 @@ nav_order: 5
 
 ### Training-Free Guidance
 
-\[
+$$
+\begin{equation*}
 \nabla_{\mathbf{x}_t} \log p_t(\mathbf{x}_t | \mathbf{y}) = \nabla_{\mathbf{x}_t} \log p_t(\mathbf{x}_t) + \nabla_{\mathbf{x}_t} \log p_t(\mathbf{y} | \mathbf{x}_t)
-\]
+\end{equation*}
+$$
 
 ## Score ALD
  []()
@@ -321,18 +323,20 @@ $$
 ### RTC
  [Real-Time Execution of Action Chunking Flow Policies](https://arxiv.org/pdf/2506.07339)
 
-\[
-\mathbf{v}_{{\text{IIGDM}}}(\mathbf{A}_t^{\tau}, \mathbf{o}_t, \tau) = \mathbf{v}(\mathbf{A}_t^{\tau}, \mathbf{o}_t, \tau) + \min\left(\beta, \frac{1 - \tau}{\tau \cdot r_\tau^2}\right)\left(\mathbf{Y} - \widehat{\mathbf{A}_t^1}\right)^\top \text{diag}(\mathbf{W}) \frac{\partial \widehat{\mathbf{A}_t^1}}{\partial \mathbf{A}_t^\tau}
-\]
+$$
+\begin{equation*}
+\mathbf{v}_{{\text{IIGDM}}}(\mathbf{A}_t^{\tau}, \mathbf{o}_t, \tau) = \mathbf{v}(\mathbf{A}_t^{\tau}, \mathbf{o}_t, \tau) + \min\left(\beta, \frac{1 - \tau}{\tau \cdot r_\tau^2}\right)\left(\mathbf{Y} - \widehat{\mathbf{A}_t^1}\right)^\top \text{diag}(\mathbf{W}) \frac{\partial \widehat{\mathbf{A}_t^1}}{\partial \mathbf{A}_t^\tau} \tag 2
+\end{equation*}
+$$
 
 其中，
 
 \[
-\widehat{\mathbf{A}_t^1} = \mathbf{A}_t^\tau + (1 - \tau)\mathbf{v}(\mathbf{A}_t^\tau, \mathbf{o}_t, \tau),
+\widehat{\mathbf{A}_t^1} = \mathbf{A}_t^\tau + (1 - \tau)\mathbf{v}(\mathbf{A}_t^\tau, \mathbf{o}_t, \tau), \tag 3
 \]
 
 \[
-r_\tau^2 = \frac{(1 - \tau)^2}{\tau^2 + (1 - \tau)^2}.
+r_\tau^2 = \frac{(1 - \tau)^2}{\tau^2 + (1 - \tau)^2}. \tag 4
 \]
 
 注意：在RTC中样本值到观测值为恒等映射。$\mathbf{W}$为引导权重,$\beta$是裁剪因子
