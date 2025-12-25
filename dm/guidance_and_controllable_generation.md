@@ -188,22 +188,25 @@ $$
 $$
 
 ### 速度场与干净样本后验估计的关系  
- 已知 $q(x_t \vert x_1) = \mathcal{N}(x_t; \alpha_t x_1, \sigma_t^2 I)$ 由Tweedies公式有:
+ 已知 $q(x_t \vert x_1) = \mathcal{N}(x_t; \alpha_t x_1, \sigma_t^2 I)$ 由Tweedies公式有:  
+
 $$
 \begin{align*}
 \mathbb{E}[\alpha_t\mathbf{x}_1 | \mathbf{x}_t] &= \mathbf{x}_t + \sigma_t^2 s_\theta(\mathbf{x}; \sigma_t) \\
 \Leftrightarrow \alpha_t \mathbb{E}[\mathbf{x}_1 | \mathbf{x}_t] &= \mathbf{x}_t + \sigma_t^2 s_\theta(\mathbf{x}; \sigma_t)
 \end{align*}  
 $$  
- 得分与速度场由如下关系:  
 
+ 得分与速度场由如下关系:  
 $$
-\begin{align*}
-s_t^\theta (x) &= \frac {u_t^\theta (x) - \frac {d ln(\alpha_t)} {dt} x} {\beta_t^2  \frac {d ln(\frac {\alpha_t} {\beta_t})} {dt}  }
-\end{align*}
+\begin{equation*}
+s_t^\theta (x) = \frac {u_t^\theta (x) - \frac {d ln(\alpha_t)} {dt} x} {\beta_t^2  \frac {d ln(\frac {\alpha_t} {\beta_t})} {dt}  }
+\end{equation*}  
 $$  
+
   带入得分与速度场的关系(并使用本文的表示符号):   
-$$
+
+$$  
 \begin{align*}
 \alpha_t \mathbb{E}[\mathbf{x}_1 | \mathbf{x}_t] &= \mathbf{x}_t + \sigma_t^2 s_\theta(\mathbf{x}; \sigma_t) \\
 \Leftrightarrow \alpha_t \hat {x}_1&=\mathbf{x}_t + \frac {\hat v - \frac {d ln(\alpha_t)} {dt} \mathbf{x}_t} { \frac {d ln(\frac {\alpha_t} {\sigma_t})} {dt}  } \\
@@ -286,6 +289,7 @@ $$
 ![算法1](../images/dm_tfliivf_alg1.jpg)  
  
   对于OT路径$\alpha_t=t,\beta_t=1-t$ 速度场:  
+  
 $$
 \begin{align*}
 \hat{v} &= \left( \alpha_t \frac{\mathrm{d} \ln(\alpha_t / \sigma_t)}{\mathrm{d}t} \right) \hat{x}_1 + \frac{\mathrm{d} \ln \sigma_t}{\mathrm{d}t} x_t \tag 8 \\
@@ -294,7 +298,9 @@ $$
 &=\frac {\hat{x}_1} {1-t} - \frac {x_t} {1-t}
 \end{align*}
 $$  
-引导系数:
+
+引导系数:  
+
 $$
 \begin{align*}
 \sigma_t^2 \frac{\mathrm{d} \ln(\alpha_t / \sigma_t)} {dt} &=  (1-t)^2\frac{\mathrm{d} \ln(t / (1-t))}{\mathrm{d}t} \\
