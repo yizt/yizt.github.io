@@ -294,6 +294,13 @@ u_t^\theta(x) &= \left( \beta_t^2 \frac{\dot{\alpha}_t}{\alpha_t} - \dot{\beta}_
 &= \beta_t^2 \left( \frac {d ln(\alpha_t)} {dt}  - \frac {d ln(\beta_t)} {dt}  \right) s_t^\theta (x) + \frac {d ln(\alpha_t)} {dt} x \\
 &=\beta_t^2  \frac {d ln(\frac {\alpha_t} {\beta_t})} {dt}   s_t^\theta (x) + \frac {d ln(\alpha_t)} {dt} x
 \end{align*}
+$$  
+ 公式55也可以写为如下公式: 
+$$
+\begin{align*}
+s_t^\theta (x) &= \frac{\alpha_t u_t^\theta (x) - \dot{\alpha}_t x}{\beta_t^2 \dot{\alpha}_t - \alpha_t \dot{\beta}_t \beta_t}. \tag{55} \\
+&= \frac {u_t^\theta (x) - \frac {d ln(\alpha_t)} {dt} x} {\beta_t^2  \frac {d ln(\frac {\alpha_t} {\beta_t})} {dt}  }
+\end{align*}
 $$
 
 Rectified Flow、MeanFlow、Consistency-FM、Shortcut Model，OT-CFM
