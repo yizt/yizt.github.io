@@ -331,9 +331,11 @@ $$
 
 其中，
 
-\[
+$$
+\begin{equation*}
 \widehat{\mathbf{A}_t^1} = \mathbf{A}_t^\tau + (1 - \tau)\mathbf{v}(\mathbf{A}_t^\tau, \mathbf{o}_t, \tau), \tag 3
-\]
+\end{equation*}
+$$
 
 \[
 r_\tau^2 = \frac{(1 - \tau)^2}{\tau^2 + (1 - \tau)^2}. \tag 4
