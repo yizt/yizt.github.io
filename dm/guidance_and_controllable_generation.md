@@ -36,18 +36,18 @@ nav_order: 5
  假设我们拥有对某个信号 \( x_0 \in \mathbb{R}^n \) 的测量值 \( y \in \mathbb{R}^m \)，其关系为  
 \[y = Hx_0 + z, \tag{2}\]
 
-其中 \( H \in \mathbb{R}^{n \times m} \) 是已知的测量矩阵（模型），\( z \sim \mathcal{N}(0, \sigma_y^2 I) \) 是一个独立同分布的高斯噪声向量，其各维度上的标准差 \( \sigma_y \) 已知。  
+其中 \( H \in \mathbb{R}^{n \times m} \) 是已知的测量矩阵，\( z \sim \mathcal{N}(0, \sigma_y^2 I) \) 是一个独立同分布的高斯噪声向量，其各维度上的标准差 \( \sigma_y \) 已知。  
  我们的目标是求解这个逆问题，从测量值 \( y \) 中恢复出原始信号 \( x_0 \in \mathbb{R}^n \)。
 
-
-$p_t(\mathbf{x}_0\vert\mathbf{x}_t)$使用高斯近似(<span style='color:red'>ΠGDM的关键近似</span>):  
+$p_t(\mathbf{x}_0 \vert \mathbf{x}_t)$使用高斯近似(<span style='color:red'>ΠGDM的关键近似</span>):  
 \[
 p_t(\mathbf{x}_0|\mathbf{x}_t) \approx \mathcal{N}(\hat{\mathbf{x}}_t, r_t^2 \mathbf{I}), \tag 4
 \]
-均值使用Tweedie公式估计
-\[
+均值使用Tweedie公式估计:  
+$$
 \hat{\mathbf{x}}_t = \mathbb{E}[\mathbf{x}_0 | \mathbf{x}_t] = \mathbf{x}_t + \sigma_t^2 \nabla_{\mathbf{x}_t} \log p_t(\mathbf{x}_t) \approx \mathbf{x}_t + \sigma_t^2 S_\theta(\mathbf{x}; \sigma_t).  \tag 5
-\]  
+$$  
+
  其中$p_t(\mathbf{x}_t \vert \mathbf{x}_0) \sim \mathcal{N}({\mathbf{x}}_0, \sigma_t^2 \mathbf{I})$,注意:<span style='color:red'>$r_t$与$\sigma_t$不同</span>  
  显然$p_t(\mathbf{y} \vert \mathbf{x}_t)$也是高斯分布:  
 \[
@@ -55,25 +55,25 @@ p_t(\mathbf{y} | \mathbf{x}_t) \approx \mathcal{N}(\mathbf{H}\hat{\mathbf{x}}_t,
 \]  
  可以推导出$p_t(\mathbf{y} \vert \mathbf{x}_t)$的得分:  
 $$
-\begin{aligned}
+\begin{align*}
 \log p_t(\mathbf{y}|\mathbf{x}_t) &= -\frac{1}{2} (\mathbf{y} - H\hat{\mathbf{x}}_t)^\top \Sigma_t^{-1} (\mathbf{y} - H\hat{\mathbf{x}}_t) + \text{const} \quad // \text{取对数，忽略常数项} \\
 \nabla_{\mathbf{x}_t} \log p_t(\mathbf{y}|\mathbf{x}_t) &= -\frac{1}{2} \nabla_{\mathbf{x}_t} ((\mathbf{y} - H\hat{\mathbf{x}}_t )^\top \Sigma_t^{-1} (\mathbf{y} - H\hat{\mathbf{x}}_t )) \quad // \text{记协方差为}\Sigma_t \\
 &= - (\frac{\partial {(\mathbf{y} - H\hat{\mathbf{x}}_t})}{\partial \mathbf{x}_t} )^\top \Sigma_t^{-1} ({\mathbf{y} - H\hat{\mathbf{x}}_t}) \\
 &= (H \frac{\partial \hat{\mathbf{x}}_t}{\partial \mathbf{x}_t})^\top \Sigma_t^{-1} ({\mathbf{y} - H\hat{\mathbf{x}}_t}) \quad //链式法则 \\
 &= (H \frac{\partial \hat{\mathbf{x}}_t}{\partial \mathbf{x}_t})^\top (r_t^2 HH^\top + \sigma_y^2 I)^{-1} ({\mathbf{y} - H\hat{\mathbf{x}}_t}) \quad //带入\Sigma_t \\
 &= \left(\underbrace{(\mathbf{y} - H\mathbf{\hat{x}}_t)^\top (r_t^2 HH^\top + \sigma_y^2 I)^{-1} H}_{\text{vector}} \underbrace{\left(\frac{\partial \mathbf{\hat{x}}_t}{\partial \mathbf{x}_t}\right)}_{\text{Jacobian}}\right)^\top \quad //\Sigma_t是对称矩阵  \tag 7
-\end{aligned}
+\end{align*}
 $$  
 
 当$\sigma_y=0$时(无噪声测量),公式7可以近似为:  
 
 $$
-\begin{aligned}
+\begin{align*}
 \nabla_{\mathbf{x}_t} \log p_t(\mathbf{y}|\mathbf{x}_t) &\approx \left(\underbrace{(\mathbf{y} - H\mathbf{\hat{x}}_t)^\top (r_t^2 HH^\top)^{-1} H}_{\text{vector}} \underbrace{\left(\frac{\partial \mathbf{\hat{x}}_t}{\partial \mathbf{x}_t}\right)}_{\text{Jacobian}}\right)^\top\\ 
 &= r_t^{-2} \left(\underbrace{(\mathbf{y} - H\mathbf{\hat{x}}_t)^\top (HH^\top)^{-1} H}_{\text{vector}} \underbrace{\left(\frac{\partial \mathbf{\hat{x}}_t}{\partial \mathbf{x}_t}\right)}_{\text{Jacobian}}\right)^\top\\
 &= r_t^{-2} \left(\underbrace{(\mathbf{y} - H\mathbf{\hat{x}}_t)^\top (H^\dagger)^\top}_{\text{vector}} \underbrace{\left(\frac{\partial \mathbf{\hat{x}}_t}{\partial \mathbf{x}_t}\right)}_{\text{Jacobian}}\right)^\top \quad //H^\dagger = H^\top(HH^\top)^{-1}\\
 &=r_t^{-2} \left(\left(\mathbf{H}^\dagger \mathbf{y} - \mathbf{H}^\dagger \mathbf{H} \mathbf{\hat{x}}_t\right)^\top \frac{\partial \mathbf{\hat{x}}_t}{\partial \mathbf{x}_t}\right)^\top  \tag 8
-\end{aligned}
+\end{align*}
 $$  
 
  其中: $H^\dagger = H^\top(HH^\top)^{-1}$ 是矩阵H的Moore-Penrose伪逆。
@@ -118,17 +118,21 @@ v(\mathbf{x}_t,\mathbf{y}) =\sigma_t^2  \frac {d ln(\frac {\alpha_t} {\sigma_t})
 \end{equation*}
 $$
 
-两式相减有:
-\[
-v(\mathbf{x}_t, \mathbf{y}) - v(\mathbf{x}_t) = \sigma_t^2 \frac{d \ln(\alpha_t/\sigma_t)}{dt} \left(\nabla_{\mathbf{x}_t} \ln q(\mathbf{x_t}|\mathbf{y})-\nabla_{\mathbf{x}_t} \ln q(\mathbf{x_t}) \right) \\
-\Leftrightarrow v(\mathbf{x}_t, \mathbf{y}) - v(\mathbf{x}_t) =  \sigma_t^2 \frac{d \ln(\alpha_t/\sigma_t)}{dt} \nabla_{\mathbf{x}_t} \ln q(\mathbf{y}|\mathbf{x}_t) \quad // 加恒为0的\nabla_{\mathbf{x}_t}\ln q(\mathbf{y}) \\
-\Leftrightarrow v(\mathbf{x}_t, \mathbf{y}) = v(\mathbf{x}_t) + \sigma_t^2 \frac{d \ln(\alpha_t/\sigma_t)}{dt} \nabla_{\mathbf{x}_t} \ln q(\mathbf{y}|\mathbf{x}_t)  \tag 11
-\]
+两式相减有:  
+$$
+\begin{align*}
+v(\mathbf{x}_t, \mathbf{y}) - v(\mathbf{x}_t) &= \sigma_t^2 \frac{d \ln(\alpha_t/\sigma_t)}{dt} \left(\nabla_{\mathbf{x}_t} \ln q(\mathbf{x_t}|\mathbf{y})-\nabla_{\mathbf{x}_t} \ln q(\mathbf{x_t}) \right) \\
+\Leftrightarrow v(\mathbf{x}_t, \mathbf{y}) - v(\mathbf{x}_t) &=  \sigma_t^2 \frac{d \ln(\alpha_t/\sigma_t)}{dt} \nabla_{\mathbf{x}_t} \ln q(\mathbf{y}|\mathbf{x}_t) \quad // 加恒为0的\nabla_{\mathbf{x}_t}\ln q(\mathbf{y}) \\
+\Leftrightarrow v(\mathbf{x}_t, \mathbf{y}) &= v(\mathbf{x}_t) + \sigma_t^2 \frac{d \ln(\alpha_t/\sigma_t)}{dt} \nabla_{\mathbf{x}_t} \ln q(\mathbf{y}|\mathbf{x}_t)  \tag {11}
+\end{align*}
+$$
 
 使用ΠGDM伪逆近似后有:  
-\[
-\widehat{\boldsymbol{v}}(\boldsymbol{x}_t, \boldsymbol{y}) = \widehat{\boldsymbol{v}}(\boldsymbol{x}_t) + \sigma_t^2 \frac{d \ln(\alpha_t/\sigma_t)}{dt} \gamma_t \nabla_{\boldsymbol{x}_t} \ln q^{app}(\boldsymbol{y}|\boldsymbol{x}_t) \tag 12
-\]
+$$
+\begin{equation}
+\widehat{\boldsymbol{v}}(\boldsymbol{x}_t, \boldsymbol{y}) = \widehat{\boldsymbol{v}}(\boldsymbol{x}_t) + \sigma_t^2 \frac{d \ln(\alpha_t/\sigma_t)}{dt} \gamma_t \nabla_{\boldsymbol{x}_t} \ln q^{app}(\boldsymbol{y}|\boldsymbol{x}_t) \tag {12}
+\end{equation}
+$$
 其中$\gamma_t$​ 是一个权重因子，用于调整公式(12)中引导项的强度。  
 
 ### 后验分布 \(q(x_1|x_t)\) 推导
@@ -137,8 +141,8 @@ v(\mathbf{x}_t, \mathbf{y}) - v(\mathbf{x}_t) = \sigma_t^2 \frac{d \ln(\alpha_t/
 #### 推导步骤与假设
 推导基于以下三个关键假设：
 1.  **数据先验分布**：\(q(x_1) = \mathcal{N}(x_1; 0, I)\)。这是推导的**起点**，也是得出简洁解析解 \(r_t^2 = \frac{\sigma_t^2}{\sigma_t^2 + \alpha_t^2}\) 的原因。
-2.  **扩散前向过程**：\(q(x_t|x_1) = \mathcal{N}(x_t; \alpha_t x_1, \sigma_t^2 I)\)。这是扩散模型的标准参数化形式，其中 \(\alpha_t\) 和 \(\sigma_t\) 是已知的时间依赖函数。
-3.  **后验分布形式**：根据高斯共轭性，后验 \(q(x_1|x_t)\) 也是高斯分布，我们将其参数化为 \(\mathcal{N}(x_1; \widehat{x}_1(x_t), r_t^2 I)\)。其中 \(\widehat{x}_1(x_t)\) 是后验均值，\(r_t^2\) 是待求的后验方差标量。
+2.  **扩散前向过程**：\(q(x_t \vert x_1) = \mathcal{N}(x_t; \alpha_t x_1, \sigma_t^2 I)\)。这是扩散模型的标准参数化形式，其中 \(\alpha_t\) 和 \(\sigma_t\) 是已知的时间依赖函数。
+3.  **后验分布形式**：根据高斯共轭性，后验 \(q(x_1 \vert x_t)\) 也是高斯分布，我们将其参数化为 \(\mathcal{N}(x_1; \widehat{x}_1(x_t), r_t^2 I)\)。其中 \(\widehat{x}_1(x_t)\) 是后验均值，\(r_t^2\) 是待求的后验方差标量。
 
 下面是详细的推导过程：
 
