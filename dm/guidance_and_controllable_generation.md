@@ -24,6 +24,53 @@ $$
 
 ## ILVR
  [Conditioning Method for Denoising Diffusion Probabilistic Models)(http://arxiv.org/pdf/2108.02938)核心思想是利用一个低通滤波器将参考图像的结构信息作为条件，引导扩散模型的生成过程，而无需重新训练模型。如果生成的图像与参考图像在低频成分上一致，那么它们在整体结构上就会相似。高频细节则可以自由生成，实现多样性。
+
+\[
+q(\mathbf{x}_t | \mathbf{x}_{t-1}) := \mathcal{N}(\mathbf{x}_t; \sqrt{1 - \beta_t} \mathbf{x}_{t-1}, \beta_t \mathbf{I}),
+\]
+
+\[
+q(x_t \vert x_0) := N(x_t; \sqrt{\alpha_t} x_0, (1 - \bar{\alpha}_t)\mathbf{I}),
+\]
+
+\[
+x_t = \sqrt{\alpha_t} x_0 + \sqrt{1 - \alpha_t} \epsilon
+\]
+
+\[
+p_\theta(x_{t-1}|x_t) = N(x_{t-1}; \mu_\theta(x_t, t), \sigma_t^2 \mathbf{I}).
+\]
+
+\[
+x_{t-1} = \frac{1}{\sqrt{\alpha_t}} \left( x_t - \frac{1 - \alpha_t}{\sqrt{1 - \alpha_t}} \epsilon_\theta(x_t, t) \right) + \sigma_t \mathbf{z},
+\]
+
+
+\[
+\begin{align*}
+p_{\theta}(x_0|c) &= \int p_{\theta}(x_{0:T}|c)dx_{1:T}, \\
+p_{\theta}(x_{0:T}|c) &= p(x_T) \prod_{t=1}^{T} p_{\theta}(x_{t-1}|x_t, c).
+\end{align*}
+\]
+
+\[
+p_\theta(x_{t-1}|x_t, c) \approx p_\theta(x_{t-1}|x_t, \phi_N(x_{t-1}) = \phi_N(y_{t-1}))
+\]
+
+\[
+\begin{align*} x'_{t-1} &\sim p_{\theta}(x'_{t-1}|x_t), \\ x_{t-1} &= \phi(y_{t-1}) + (I - \phi)(x'_{t-1}). \end{align*}
+\]
+
+
+\[
+Y = \{ y : \phi_N(y) = \phi_N(x), x \in \mu \},
+\]
+
+\[
+R_N \subset R_M \subset \mu,
+\]
+
+
 ## RED-Diff
  [A VARIATIONAL PERSPECTIVE ON SOLVING INVERSE PROBLEMS WITH DIFFUSION MODELS](https://arxiv.org/pdf/2305.04391) 暂时没有看懂
 
@@ -83,10 +130,165 @@ $$
  其中: $H^\dagger = H^\top(HH^\top)^{-1}$ 是矩阵H的Moore-Penrose伪逆。
 
 ## DPS
- [Diffusion posterior sampling for general noisy inverse problems](https://arxiv.org/pdf/2209.14687)
+ [Diffusion posterior sampling for general noisy inverse problems](https://arxiv.org/pdf/2209.14687)提出了一种名为“扩散后验采样 (Diffusion Posterior Sampling, DPS)”的新方法，旨在高效且稳健地解决各种带有测量噪声的线性及非线性逆问题。传统扩散模型在逆问题求解中通常面临两大挑战：一是难以处理测量噪声(伪逆引导就是无噪声版本)，二是对非线性正向模型支持不足。DPS 方法通过对后验采样进行创新性近似，有效地克服了这些限制。
+
+DDPM前向过程的SDE方程表达式如下:
+\[
+dx = - \frac{\beta(t)}{2} x dt + \sqrt{\beta(t)} dw \tag 1
+\]
+
+根据Reverse-SDE其对应的采样过程SDE为:  
+\[
+dx = \left[ -\frac{\beta(t)}{2} \boldsymbol{x} - \beta(t)\nabla_{\boldsymbol{x}_t} \log p_t(\boldsymbol{x}_t) \right] dt + \sqrt{\beta(t)} d\bar{\boldsymbol{w}} \tag 2
+\]
+可以看出漂移项仅依赖得分函数,可以训练一个去噪得分匹配(Noise Conditional ScoreNetwork)近似,训练的目标如下:
+\[
+\theta^* = \underset{\theta}{\arg\min} \, \mathbb{E}_{t \sim U(\varepsilon, 1), \boldsymbol{x}(t) \sim p(\boldsymbol{x}(t) | \boldsymbol{x}(0)), \boldsymbol{x}(0) \sim p_{\text{data}}} \left[ \left\| s_\theta(\boldsymbol{x}(t), t) - \nabla_{\boldsymbol{x}_t} \log p(\boldsymbol{x}(t) | \boldsymbol{x}(0)) \right\|_2^2 \right] \tag 3
+\]
+
+对于带条件的采样,根据贝叶斯原理可以将$p(x)$作为先验，从后验$p(x\vert y)$采样，则条件采样下公式2变为:  
+\[
+dx = \left[ -\frac{\beta(t)}{2}\mathbf{x} - \beta(t)\left(\nabla_{\mathbf{x}_t}\log p_t(\mathbf{x}_t) + \nabla_{\mathbf{x}_t}\log p_t(\mathbf{y}|\mathbf{x}_t)\right) \right] dt + \sqrt{\beta(t)}d\bar{w}, \tag 4
+\]
+其中:
+\[
+\nabla_{x_t} \log p_t(x_t | \mathbf{y}) = \nabla_{x_t} \log p_t(x_t) + \nabla_{x_t} \log p_t(\mathbf{y} | x_t). \tag 5
+\]
+后一项(引导梯度)难以获得解析解，由于其依赖时间t,且y和$x_t$没有显示依赖。
+
+一般地带噪测量y与样本$x_0$有如下公式表示:
+\[
+\boldsymbol{y} = \boldsymbol{\mathcal{A}}(\boldsymbol{x}_0) + \boldsymbol{n}, \quad \boldsymbol{y}, \boldsymbol{n} \in \mathbb{R}^n, \quad \boldsymbol{x}_0 \in \mathbb{R}^d 
+\tag 6
+\]
+ 其中$\boldsymbol{\mathcal{A}}$为前向测量操作算子,$\boldsymbol{n}$为测量噪声。
+
+后验分布$p(y \vert x_t)$可以分解为:
+$$
+\begin{align*}
+p(\mathbf{y}|\mathbf{x}_t) &= \int p(\mathbf{y}|\mathbf{x}_0, \mathbf{x}_t)p(\mathbf{x}_0|\mathbf{x}_t)d\mathbf{x}_0 \\
+&= \int p(\mathbf{y}|\mathbf{x}_0)p(\mathbf{x}_0|\mathbf{x}_t)d\mathbf{x}_0 \tag 7
+\end{align*}
+$$
+可以看出$p(\mathbf{x}_0 \vert \mathbf{x}_t)$通常难以获取。 
+
+对于DDPM其$x_t$与$x_0$的关系如下:
+\[
+x_t = \sqrt{\bar{\alpha}(t)} x_0 + \sqrt{1 - \bar{\alpha}(t)} z, \quad z \sim \mathcal{N}(0, I), \tag 8
+\]
+命题1: 对于VP-SDE或DDPM采样，$p(x_0|x_t)$在存在唯一的后验均值：
+\[
+\hat{\boldsymbol{x}}_0 := \mathbb{E}[\boldsymbol{x}_0 | \boldsymbol{x}_t] = \frac{1}{\sqrt{\bar{\alpha}(t)}} \left( \boldsymbol{x}_t + (1 - \bar{\alpha}(t)) \nabla_{\boldsymbol{x}_t} \log p_t(\boldsymbol{x}_t) \right)  \tag 9
+\]
+可以近似表示为：
+\[
+\hat{\mathbf{x}}_0 \approx \frac{1}{\sqrt{\bar{\alpha}(t)}} \left(\mathbf{x}_t + (1 - \bar{\alpha}(t))\mathbf{s}_{\theta^{*}}(\mathbf{x}_t, t)\right).  \tag {10}
+\]
+### DPS核心近似
+ 既然$p(\mathbf{y} \vert \mathbf{x}_t)$难以计算,由公式7可知$p(\mathbf{y} \vert \mathbf{x}_t)=\mathbb{E}_{\mathbf{x}_0 \sim p(\mathbf{x}_0|\mathbf{x}_t)}[p(\mathbf{y} \vert \mathbf{x}_0)]$, 那么用$p(\mathbf{y} \vert \hat{\mathbf{x}}_0)$来近似。
+\[
+p(\mathbf{y}|\mathbf{x}_t) \simeq p(\mathbf{y}|\hat{\mathbf{x}}_0), \text{ where } \hat{\mathbf{x}}_0 := \mathbb{E}[\mathbf{x}_0|\mathbf{x}_t] = \mathbb{E}_{\mathbf{x}_0 \sim p(\mathbf{x}_0|\mathbf{x}_t)}[\mathbf{x}_0]  \tag {11}
+\]
+其近似误差可用Jensen gap来度量：
+\[
+\mathcal{J}(f, x \sim p(x)) = \mathbb{E}[f(x)] - f(\mathbb{E}[x]), \tag {12}
+\]
+定理1: 对于公式6定义的测量,其中$\mathbf{n} \sim \mathcal{N}(0, \sigma^{2} \mathbf{I})$，我们近似：
+\[
+p(\mathbf{y}|\mathbf{x}_t) \simeq p(\mathbf{y}|\hat{\mathbf{x}}_0), \tag {13}
+\]
+则其Jensen gap的上界为:
+\[
+\mathcal{J} \leq \frac{d}{\sqrt{2\pi\sigma^2}} e^{-1/2\sigma^2} \|\nabla_x \mathcal{A}(\boldsymbol{x})\|{m_1}  \tag {14}
+\]
+其中：$ \| \nabla_x \mathcal{A}(\boldsymbol{x}) := \max_{\boldsymbol{x}} \| \nabla_x \mathcal{A}(\boldsymbol{x}) \| \text{ and } m_1 := f \| x_0 - \hat x_0 \| p(x_0 \vert x_t)  d x_0$。由公式14可知，<span style='color:red'>测量噪声$\sigma$越大近似误差越小</span>,因此DPS对于噪声类的逆问题效果很好。  
+ 由公式13概率分布近似，可以导出它们梯度也近似:
+\[
+\nabla_{x_t} \log p(\mathbf{y} | x_t) \simeq \nabla_{x_t} \log p(\mathbf{y} | \hat{x}_0), \tag {15}
+\]
+ 对于高斯测量噪声：
+\[
+p(\mathbf{y}|\mathbf{x}_0) = \frac{1}{\sqrt{(2\pi)^n \sigma^{2n}}} \exp \left[ - \frac{\|\mathbf{y} - \mathcal{A}(\mathbf{x}_0)\|_2^2}{2\sigma^2} \right],
+\]
+ 根据定理1和公式15有:
+\[
+\nabla_{\mathbf{x}_t} \log p(\mathbf{y}|\mathbf{x}_t) \simeq - \frac{1}{\sigma^2} \nabla_{\mathbf{x}_t} \left\| \mathbf{y} - \mathcal{A}(\hat{\mathbf{x}}_0(\mathbf{x}_t)) \right\|_2^2
+\]  
+ 代入公式5有：
+\[
+\nabla_{x_t} \log p_t(\mathbf{x}_t | \mathbf{y}) \simeq s_{\theta*}(\mathbf{x}_t, t) - \rho \nabla_{x_t} \|\mathbf{y} - A(\hat{\mathbf{x}}_0)\|_2^2
+\]
+
+其中:$ρ = 1/\sigma^2$ 可当作步长。
 
 ## CCDF
- [Come-Closer-Diffuse-Faster: Accelerating Conditional Diffusion Models for Inverse Problems through Stochastic Contraction](https://arxiv.org/pdf/2112.05146)
+ [Come-Closer-Diffuse-Faster: Accelerating Conditional Diffusion Models for Inverse Problems through Stochastic Contraction](https://arxiv.org/pdf/2112.05146)  
+
+\[
+dx = \bar{\mathbf{f}}(x, t) dt + \bar{\mathbf{g}}(t) dw,
+\]
+
+\[
+dx = \left[ \bar{\mathbf{f}}(\mathbf{x}, t) - \bar{g}(t)^2 \underbrace{\nabla_x \log p_t(\mathbf{x})}_{\text{score function}} \right] dt + \bar{g}(t) d\bar{w}
+\]
+
+
+\[
+\bar{\boldsymbol{f}}(\boldsymbol{x},t) = -\frac{1}{2}\beta(t)\boldsymbol{x}, \quad \bar{g}(t) = \sqrt{\beta(t)},
+\]
+
+\[
+\boldsymbol{x}_i = \sqrt{\bar{\alpha}_i} \boldsymbol{x}_0 + \sqrt{1 - \bar{\alpha}_i} \boldsymbol{z}
+\]
+
+\[
+\mathbf{x}_{i-1} = \frac{1}{\sqrt{\alpha_i}} \left( \mathbf{x}_i + (1 - \alpha_i)\mathbf{s}_{\theta}(\mathbf{x}_i, i) \right) + \sqrt{\sigma_i}\mathbf{z},
+\]
+
+\[
+\mathbf{x}_{i-1} = \sqrt{\bar{\alpha}_{i-1}} \left( \frac{\mathbf{x}_i - \sqrt{1 - \bar{\alpha}_i} \mathbf{z}_\theta(\mathbf{x}_i, i)}{\sqrt{\bar{\alpha}_i}} \right) + \sqrt{1 - \bar{\alpha}_{i-1}} \mathbf{z}_\theta(\mathbf{x}_i, i)
+\]
+
+\[
+\boldsymbol{z}_{\theta}(x, i) := -\boldsymbol{s}_{\theta}(x, i)\sqrt{1 - \bar{\alpha}_i}.
+\]
+
+\[
+x'_{i-1} = \boldsymbol{f}(x_i, i) + \boldsymbol{g}(x_i, i)z_i
+\]
+
+\[
+x_{i-1} = \boldsymbol{A}x'_{i-1} + \boldsymbol{b}
+\]
+
+\[
+\| \boldsymbol{A}\boldsymbol{x} - \boldsymbol{A}\boldsymbol{x}' \| \le \| \boldsymbol{x} - \boldsymbol{x}' \|, \quad \forall \boldsymbol{x}, \boldsymbol{x}'
+\]
+
+\[
+\bar{\varepsilon}_{N'} := \mathbb{E} \| \mathbf{x}_{N'} - \tilde{\mathbf{x}}_{N'} \|^2 = a^2_{N'} \varepsilon_0 + 2 b^2_{N'} n.
+\]
+
+\[
+\bar{\varepsilon}_{0,r} \leq \frac{2C\tau}{1-\lambda^2} + \lambda^{2N'} \bar{\varepsilon}_{N'}
+\]
+
+\[
+\lambda = \begin{cases}
+    \max_{i \in [N']} \sqrt{\alpha_i} \left( \frac{1 - \bar{\alpha}_{i-1}}{1 - \bar{\alpha}_i} \right) & \text{(DDPM)} \\
+    \max_{i \in [N']} \frac{\sigma_{i-1}^2 - \sigma_0^2}{\sigma_i^2 - \sigma_0^2} & \text{(SMLD)} \\
+    \max_{i \in [N']} \frac{\sigma_{i-1}}{\sigma_i} & \text{(DDIM)}
+\end{cases}
+\]
+
+\[
+C = \begin{cases}
+n(1 - \alpha_N) & (\text{DDPM}) \\
+n \max_{i \in [N']} \sigma_i^2 - \sigma_{i-1}^2 & (\text{SMLD}) \\
+0 & (\text{DDIM})
+\end{cases}
+\]
+
 
 ## TRAINING-FREE LINEAR IMAGE INVERSES VIA FLOWS
  [TRAINING-FREE LINEAR IMAGE INVERSES VIA FLOWS](http://arxiv.org/pdf/2310.04432)
@@ -140,7 +342,7 @@ $$
 $$
   其中$\gamma_t$​ 是一个权重因子，用于调整公式(12)中引导项的强度。  
 
-  本文假设**先验分布**也是标准高斯分布 $q(x_1) \sim \mathcal{N}(0, I)$,(<span style='color:red'>这是一个很强的假设,显然先验数据分布不会是高斯分布</span>)。 则后验分布的方差为(后面会证明): 
+  本文假设**先验分布**也是标准高斯分布 $q(x_1) \sim \mathcal{N}(0, I)$,(<span style='color:red'>这是一个很强的假设,显然先验数据分布不会是高斯分布</span>)。 则后验分布的方差为 (后面会证明) : 
 \[
 r_t^2 = \frac{\sigma_t^2}{\sigma_t^2 + \alpha_t^2} \tag {13}
 \]
