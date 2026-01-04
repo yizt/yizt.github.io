@@ -25,47 +25,62 @@ $$
 ## ILVR
  [Conditioning Method for Denoising Diffusion Probabilistic Models)(http://arxiv.org/pdf/2108.02938)核心思想是利用一个低通滤波器将参考图像的结构信息作为条件，引导扩散模型的生成过程，而无需重新训练模型。如果生成的图像与参考图像在低频成分上一致，那么它们在整体结构上就会相似。高频细节则可以自由生成，实现多样性。
 
+### 背景回顾
+ 对于DDPM,其前向加噪过程如下:
 \[
-q(\mathbf{x}_t | \mathbf{x}_{t-1}) := \mathcal{N}(\mathbf{x}_t; \sqrt{1 - \beta_t} \mathbf{x}_{t-1}, \beta_t \mathbf{I}),
+q(\mathbf{x}_t | \mathbf{x}_{t-1}) := \mathcal{N}(\mathbf{x}_t; \sqrt{1 - \beta_t} \mathbf{x}_{t-1}, \beta_t \mathbf{I}), \tag 1
+\]
+其中$\beta_t$为固定的方差。  
+ 给定干净样本$x_0$, t时刻的带噪样本为:
+\[
+q(x_t \vert x_0) := N(x_t; \sqrt{\alpha_t} x_0, (1 - \bar{\alpha}_t)\mathbf{I}), \tag 2
+\]
+其中: $\alpha_t = 1 - \beta_t \quad \text{且} \quad \bar{\alpha}_t := \prod_{s=1}^{t} \alpha_s$。  
+因此$x_t$可表示为干净样本$x_0$和噪声$\epsilon$的线性组合:
+\[
+x_t = \sqrt{\alpha_t} x_0 + \sqrt{1 - \alpha_t} \epsilon  \tag 3
+\]
+ DDPM近似反向采样过程为一个高斯过程，均值可学习，方差固定:
+\[
+p_\theta(x_{t-1}|x_t) = N(x_{t-1}; \mu_\theta(x_t, t), \sigma_t^2 \mathbf{I}). \tag 4
+\]
+ 建模噪声网络替代均值网络，反向采样过程如下：
+\[
+x_{t-1} = \frac{1}{\sqrt{\alpha_t}} \left( x_t - \frac{1 - \alpha_t}{\sqrt{1 - \alpha_t}} \epsilon_\theta(x_t, t) \right) + \sigma_t \mathbf{z},  \tag 5
 \]
 
-\[
-q(x_t \vert x_0) := N(x_t; \sqrt{\alpha_t} x_0, (1 - \bar{\alpha}_t)\mathbf{I}),
-\]
-
-\[
-x_t = \sqrt{\alpha_t} x_0 + \sqrt{1 - \alpha_t} \epsilon
-\]
-
-\[
-p_\theta(x_{t-1}|x_t) = N(x_{t-1}; \mu_\theta(x_t, t), \sigma_t^2 \mathbf{I}).
-\]
-
-\[
-x_{t-1} = \frac{1}{\sqrt{\alpha_t}} \left( x_t - \frac{1 - \alpha_t}{\sqrt{1 - \alpha_t}} \epsilon_\theta(x_t, t) \right) + \sigma_t \mathbf{z},
-\]
-
-
+ 给定条件c，从条件分布$p(x_0 \vert c)$采样:
 \[
 \begin{align*}
 p_{\theta}(x_0|c) &= \int p_{\theta}(x_{0:T}|c)dx_{1:T}, \\
-p_{\theta}(x_{0:T}|c) &= p(x_T) \prod_{t=1}^{T} p_{\theta}(x_{t-1}|x_t, c).
+p_{\theta}(x_{0:T}|c) &= p(x_T) \prod_{t=1}^{T} p_{\theta}(x_{t-1}|x_t, c).  \tag 6
 \end{align*}
 \]
-
+ 可分解为每个转移都带有条件c的转移积分。
+### 关键近似
+ 给定参考图像y,条件c确保生成的图像$x_0$下采样的图像$\phi_N(x_0)$与参考图像的下采样图像$\phi_N(y)$相等，$\phi_N(\cdot)$为低通滤波操作，对图像下采样N倍,然后上采样N倍。  
+ 根据前向过程公式3,对于每个转移有:  
 \[
-p_\theta(x_{t-1}|x_t, c) \approx p_\theta(x_{t-1}|x_t, \phi_N(x_{t-1}) = \phi_N(y_{t-1}))
+p_\theta(x_{t-1}|x_t, c) \approx p_\theta(x_{t-1}|x_t, \phi_N(x_{t-1}) = \phi_N(y_{t-1}))  \tag 7
 \]
-
+ 为区分无条件和有条件，$x'_{t-1}$表示无条件样本,$x_{t-1}$表示带条件样本,则有如下关系:
 \[
-\begin{align*} x'_{t-1} &\sim p_{\theta}(x'_{t-1}|x_t), \\ x_{t-1} &= \phi(y_{t-1}) + (I - \phi)(x'_{t-1}). \end{align*}
+\begin{align*} 
+x'_{t-1} &\sim p_{\theta}(x'_{t-1}|x_t), \\ x_{t-1} &= \phi(y_{t-1}) + (I - \phi)(x'_{t-1}).  \tag 8
+\end{align*}
 \]
+ 带条件样本为 低通部分(取参考图像) + 高通部分(取无条件)
+
+ ILVR算法流程如下图:
+ ![dm_ilvr_alg](../images/dm_ilvr_alg.jpg)
 
 
+性质1: 只要低通滤波相等就可以作为参考图像:
 \[
 Y = \{ y : \phi_N(y) = \phi_N(x), x \in \mu \},
 \]
 
+性质2: 下采样因子越大,参考图像选择面越大。
 \[
 R_N \subset R_M \subset \mu,
 \]
