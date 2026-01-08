@@ -197,13 +197,24 @@ P_n(x) = a_0 + a_1(x-x_0) + a_2(x-x_0)(x-x_1) + \cdots + a_n(x-x_0)(x-x_1)\cdots
 
 **步骤1：利用 \( P_n(x_0) = y_0 \)**
 代入 \( x = x_0 \)：
-$$P_n(x_0) = a_0 = y_0 \quad \Rightarrow \quad a_0 = f[x_0]$$
-
+$$
+\begin{equation*}
+P_n(x_0) = a_0 = y_0 \quad \Rightarrow \quad a_0 = f[x_0]
+\end{equation*}
+$$
 **步骤2：利用 \( P_n(x_1) = y_1 \)**
 代入 \( x = x_1 \)：
-$$P_n(x_1) = a_0 + a_1(x_1 - x_0) = y_1$$
+$$
+\begin{equation*}
+P_n(x_1) = a_0 + a_1(x_1 - x_0) = y_1
+\end{equation*}
+$$
 解得：
-$$a_1 = \frac{y_1 - y_0}{x_1 - x_0} = f[x_0, x_1]$$
+$$
+\begin{equation*}
+a_1 = \frac{y_1 - y_0}{x_1 - x_0} = f[x_0, x_1]
+\end{equation*}
+$$
 
 
 **步骤3：利用 \( P_n(x_2) = y_2 \)**
@@ -216,7 +227,11 @@ P_n(x_2) = a_0 + a_1(x_2 - x_0) + a_2(x_2 - x_0)(x_2 - x_1) = y_2
 a_2 = \frac{y_2 - a_0 - a_1(x_2 - x_0)}{(x_2 - x_0)(x_2 - x_1)}
 \]
 将 \( a_0 = f[x_0], a_1 = f[x_0, x_1] \) 代入，通过代数运算可得：
-$$a_2 = \frac{\frac{y_2 - y_1}{x_2 - x_1} - \frac{y_1 - y_0}{x_1 - x_0}}{x_2 - x_0} = f[x_0, x_1, x_2]$$
+$$
+\begin{equation*}
+a_2 = \frac{\frac{y_2 - y_1}{x_2 - x_1} - \frac{y_1 - y_0}{x_1 - x_0}}{x_2 - x_0} = f[x_0, x_1, x_2]
+\end{equation*}
+$$
 
 **步骤4：归纳假设与一般情况**
 假设前 \( k \) 个系数满足：
@@ -243,9 +258,13 @@ a_{k+1} = \frac{y_{k+1} - \sum_{j=0}^{k} a_j \prod_{i=0}^{j-1} (x_{k+1} - x_i)}{
 1. \( Q(x) \)：基于节点 \( x_0, \dots, x_k \) 的牛顿插值多项式（次数 ≤ k）
 2. \( R(x) \)：基于节点 \( x_1, \dots, x_{k+1} \) 的牛顿插值多项式（次数 ≤ k）
 
-由归纳假设：
-$$Q(x) = f[x_0] + \sum_{j=1}^{k} f[x_0, \dots, x_j] \prod_{i=0}^{j-1} (x - x_i)$$
-$$R(x) = f[x_1] + \sum_{j=2}^{k+1} f[x_1, \dots, x_j] \prod_{i=1}^{j-1} (x - x_i)$$
+由归纳假设： 
+$$
+\begin{align*}
+Q(x) = f[x_0] + \sum_{j=1}^{k} f[x_0, \dots, x_j] \prod_{i=0}^{j-1} (x - x_i) \\
+R(x) = f[x_1] + \sum_{j=2}^{k+1} f[x_1, \dots, x_j] \prod_{i=1}^{j-1} (x - x_i)
+\end{align*}
+$$  
 
 **关键构造**：定义多项式
 \[
@@ -271,9 +290,9 @@ S(x) = \frac{(x - x_0)R(x) - (x - x_{k+1})Q(x)}{x_{k+1} - x_0}
 $$\frac{f[x_1, \dots, x_{k+1}] - f[x_0, \dots, x_k]}{x_{k+1} - x_0} = f[x_0, x_1, \dots, x_{k+1}]$$
 
 而 \( P_{k+1}(x) \) 中 \( x^{k+1} \) 项系数正是 \( a_{k+1} \)，所以：
-\[
+$$
 a_{k+1} = f[x_0, x_1, \dots, x_{k+1}]
-\]
+$$
 
 这就完成了归纳证明。
 
@@ -299,11 +318,12 @@ P_{n+1}(t) = P_n(t) + f[x_0, \dots, x_n, x] \prod_{i=0}^{n} (t - x_i)
 f(x) = P_n(x) + f[x_0, \dots, x_n, x] \prod_{i=0}^{n} (x - x_i)
 \]
 所以余项为：
-\[
+$$
+\begin{equation}
 R_n(x) = f(x) - P_n(x) = f[x_0, x_1, \dots, x_n, x] \prod_{i=0}^{n} (x - x_i)
 \tag{4}
-\]
-
+\end{equation}
+$$
 - 5.2 导数形式的余项
 若 \( f \) 在包含节点 \( x_0, \dots, x_n, x \) 的区间上 \( n+1 \) 次可导，由差商与导数的关系，存在 \( \xi \) 使得：
 \[
