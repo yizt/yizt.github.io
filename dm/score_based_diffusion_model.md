@@ -157,28 +157,6 @@ $$
 \]
 需要注意的是:<span style='color:red'>在NCSN中$\sigma_i=\sigma(t)$,但是在DDPM中$\beta_i \not=\beta(t)$,而是$\beta(t)=N\beta_i$,但是仍然都使用符号$\beta$,很容易误以为是想等的</span>。
 
-\[
-\Sigma_{\text{VP}}(t) = \mathbf{I} + e^{\int_0^t -\beta(s) \, ds} \left(\Sigma_{\text{VP}}(0) - \mathbf{I}\right)
-\]
-
-\[
-\mathrm{d}\mathbf{x} = -\frac{1}{2}\beta(t)\mathbf{x} \, \mathrm{d}t + \sqrt{\beta(t)\left(1 - e^{-2\int_{0}^{t}\beta(s) \, \mathrm{d}s}\right)} \, \mathrm{d}\mathbf{w}.
-\]
-
-\[
-\Sigma_{\text{sub-VP}}(t) = \mathbf{I} + e^{-2 \int_0^t \beta(s) ds} \mathbf{I} + e^{-\int_0^t \beta(s) ds} \left(\Sigma_{\text{sub-VP}}(0) - 2\mathbf{I}\right),
-\]
-
-\[
-p_{0t}(\mathbf{x}(t) \mid \mathbf{x}(0)) = \left\{
-\begin{array}{ll}
-\mathcal{N}(\mathbf{x}(t); \mathbf{x}(0), [\sigma^2(t) - \sigma^2(0)]\mathbf{I}), \\
-\mathcal{N}(\mathbf{x}(t); \mathbf{x}(0)e^{-\frac{1}{2}\int_0^t \beta(s)ds}, \mathbf{I} - \mathbf{I}e^{-\int_0^t \beta(s)ds}) \\
-\mathcal{N}(\mathbf{x}(t); \mathbf{x}(0)e^{-\frac{1}{2}\int_0^t \beta(s)ds}, [1 - e^{-\int_0^t \beta(s)ds}]^2\mathbf{I})
-\end{array}
-\right.
-\]
-
 ### 逆扩散采样
  根据Reverse-time SDE公式:
 \[
@@ -235,3 +213,76 @@ $$
 ### PREDICTOR-CORRECTOR SAMPLERS
  原始的DDPM采样过程其实就是一个去噪过程(预测器)，而原始NCSN的采样过程仅在每个噪声层级采样t时刻分布的样本(校正器),本文提出一个**预测-校正采样器**每个采样执行一次去噪预测和当前噪声等级的朗之万动力学采样,预测-校正采样器比单纯的去噪预测或单纯校正采样效果要好。
 ![](../images/dm_score-sde_alg.jpg)
+
+
+### VE&VP&sub-VP
+#### DDPM
+ 对于公式24表示的DDPM SDE过程，其边缘分布$p_t(\mathbf{x})$的斜方差微分方程如下: 
+\[
+\frac{d\Sigma_{\text{VP}}(t)}{dt} = \beta(t)(\mathbf{I} - \Sigma_{\text{VP}}(t)),
+\]
+ 使用ODE的积分因子法或常数变异法可得:
+\[
+\Sigma_{\text{VP}}(t) = \mathbf{I} + e^{\int_0^t -\beta(s) \, ds} \left(\Sigma_{\text{VP}}(0) - \mathbf{I}\right)
+\]
+ 因$0<e^{\int_0^t -\beta(s) \, ds}<=1$,因此$\Sigma_{\text{VP}}(t)$就是$\Sigma_{\text{VP}}(0)$和$\mathbf{I}$的线性组合,因此方差是有届的，故命名为 **Variance Preserving (VP) SDE**。
+
+#### sub-VP SDE
+ 受VP SDE的启发,本文提出sub-VP SDE公式如下:
+\[
+\mathrm{d}\mathbf{x} = -\frac{1}{2}\beta(t)\mathbf{x} \, \mathrm{d}t + \sqrt{\beta(t)\left(1 - e^{-2\int_{0}^{t}\beta(s) \, \mathrm{d}s}\right)} \, \mathrm{d}\mathbf{w}. \tag {27}
+\]
+ 其边缘分布$p_t(\mathbf{x})$的斜方差为:
+\[
+\Sigma_{\text{sub-VP}}(t) = \mathbf{I} + e^{-2 \int_0^t \beta(s) ds} \mathbf{I} + e^{-\int_0^t \beta(s) ds} \left(\Sigma_{\text{sub-VP}}(0) - 2\mathbf{I}\right),  \tag {28}
+\]
+ 比较两式可知，sub-VP的斜方差总是小于对应的VP的斜方差,方差越小数据越干净,采样轨迹越平滑。
+
+#### DCSN
+ 对于去噪得分匹配其边缘分布的斜方差为$\Sigma_{\text{VE}}(t)=[\sigma^2(t) - \sigma^2(0)]\mathbf{I}$。
+
+#### 总结
+  VE、VP和sub-VP SDEs的漂移系数均为仿射形式，这使得前向过程的转移核具有解析解，均为高斯核，定义如下:
+
+$$
+p_{0t}(\mathbf{x}(t) \mid \mathbf{x}(0)) = \left\{
+\begin{array}{ll}
+\mathcal{N}(\mathbf{x}(t); \mathbf{x}(0), [\sigma^2(t) - \sigma^2(0)]\mathbf{I}), \\
+\mathcal{N}(\mathbf{x}(t); \mathbf{x}(0)e^{-\frac{1}{2}\int_0^t \beta(s)ds}, \mathbf{I} - \mathbf{I}e^{-\int_0^t \beta(s)ds}) \\
+\mathcal{N}(\mathbf{x}(t); \mathbf{x}(0)e^{-\frac{1}{2}\int_0^t \beta(s)ds}, [1 - e^{-\int_0^t \beta(s)ds}]^2\mathbf{I})
+\end{array}
+\right.
+$$
+ 因此所有的SDE均可以使用公式7定义的目标函数有效的训练。
+
+### SDE 边缘分布均值和方差的微分方程
+对于由随机微分方程（SDE）定义的随机过程：
+\[
+d\mathbf{x} = f(\mathbf{x}, t) \, dt + g(\mathbf{x}, t) \, d\mathbf{w},
+\]
+其中 \(\mathbf{x}\) 是随机变量（可以是向量），\(f\) 是漂移项，\(g\) 是扩散项，\(\mathbf{w}\) 是维纳过程（布朗运动），其均值和方差的微分方程如下。
+
+**均值 \(\boldsymbol{\mu}(t) = \mathbb{E}[\mathbf{x}(t)]\) 的微分方程：**
+\[
+\frac{d\boldsymbol{\mu}}{dt} = \mathbb{E}[f(\mathbf{x}, t)].
+\]
+
+**方差（协方差矩阵）\(\mathbf{\Sigma}(t) = \mathbb{E}[(\mathbf{x}(t) - \boldsymbol{\mu}(t))(\mathbf{x}(t) - \boldsymbol{\mu}(t))^\top]\) 的微分方程**：
+\[
+\frac{d\mathbf{\Sigma}}{dt} = \mathbb{E}[(\mathbf{x} - \boldsymbol{\mu}) f(\mathbf{x}, t)^\top + f(\mathbf{x}, t) (\mathbf{x} - \boldsymbol{\mu})^\top] + \mathbb{E}[g(\mathbf{x}, t) g(\mathbf{x}, t)^\top].
+\]
+
+#### 线性 SDE
+当 \(f\) 和 \(g\) 具有线性形式，即：
+\[
+d\mathbf{x} = (A(t) \mathbf{x} + b(t)) \, dt + G(t) \, d\mathbf{w},
+\]
+其中 \(A(t)\)、\(b(t)\) 和 \(G(t)\) 是确定性函数，则均值和方差的微分方程封闭：
+\[
+\frac{d\boldsymbol{\mu}}{dt} = A(t) \boldsymbol{\mu} + b(t),
+\]
+\[
+\frac{d\mathbf{\Sigma}}{dt} = A(t) \mathbf{\Sigma} + \mathbf{\Sigma} A(t)^\top + G(t) G(t)^\top.
+\]
+
+对于一般的非线性 \(f\) 和 \(g\)，上述方程不是封闭的，需要知道 \(\mathbf{x}\) 的全分布来计算期望。
