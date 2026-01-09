@@ -77,17 +77,23 @@ $$\mathbf{x}_{t+1}=\mathbf{x}_t+\tau \nabla_{\mathbf{x}} \log p\left(\mathbf{x}_
 
 ### 背景知识
  对于Noise Conditional Score Network (NCSN)其训练目标是如下的去噪得分匹配的加权和:
-\[
+$$
+\begin{equation*}
 \boldsymbol{\theta}^* = \operatorname{arg min}_{\boldsymbol{\theta}} \sum_{i=1}^N \sigma_i^2 \mathbb{E}_{p_{\text{data}}(\mathbf{x})} \mathbb{E}_{p_{\sigma_i}(\tilde{\mathbf{x}}|\mathbf{x})} \left[ \left\| \mathbf{s}_{\boldsymbol{\theta}}(\tilde{\mathbf{x}}, \sigma_i) - \nabla_{\tilde{\mathbf{x}}} \log p_{\sigma_i}(\tilde{\mathbf{x}} | \mathbf{x}) \right\|_{2}^{2} \right].  \tag 1
-\]
+\end{equation*}
+$$
  对于每一个噪声层级$i$使用Langevin MCMC采样:
-\[
+$$
+\begin{equation*}
 \mathbf{x}_i^m = \mathbf{x}_i^{m-1} + \epsilon_i S_\theta^*(\mathbf{x}_i^{m-1}, \sigma_i) + \sqrt{2\epsilon_i}\mathbf{z}_i^m, \quad m=1,2,\dots,M,
-\]
+\end{equation*}
+$$
  对于DENOISING DIFFUSION PROBABILISTIC MODELS (DDPM)其优化目标如下加权的证据下届evidence lower bound (ELBO)。
-\[
+$$
+\begin{equation*}
 \theta^* = \arg \min_{\theta} \sum_{i=1}^{N} (1 - \alpha_i) \mathbb{E}_{p_{\text{data}}(\mathbf{x})} \mathbb{E}_{p_{\alpha_i}(\tilde{\mathbf{x}}|\mathbf{x})} \left[ \left\| \mathbf{s}_{\theta}(\tilde{\mathbf{x}}, i) - \nabla_{\tilde{\mathbf{x}}} \log p_{\alpha_i}(\tilde{\mathbf{x}} | \mathbf{x}) \right\|^2_2 \right] \tag 3
-\]
+\end{equation*}
+$$
 其中:
 $$
 \begin{gather*}
@@ -97,9 +103,11 @@ p_{\alpha_i}(x_i | x_0) = \mathcal{N}\!\left(x_i; \sqrt{\alpha_i} \, x_0, (1 - \
 $$
 注意这里的$\alpha_i$相当于原DDPM论文中的$\bar {\alpha_i}$。
  其反向祖先采样过程如下: 
-\[
+$$
+\begin{equation*}
 \mathbf{X}_{i-1} = \frac{1}{\sqrt{1 - \beta_i}}\left(\mathbf{X}_i + \beta_i \mathbf{S}_{\theta*}(\mathbf{X}_i, i)\right) + \sqrt{\beta_i}\mathbf{Z}_i, \quad i = N, N-1, \dots, 1.
-\]
+\end{equation*}
+$$
 
 ### 扩散模型连续化表示-SDE
  扩散过程可由Itˆo SDE建模:
