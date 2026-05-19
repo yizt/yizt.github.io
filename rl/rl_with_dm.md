@@ -433,33 +433,40 @@ $$
 
 随机最优控制考虑关于随机微分方程的一般优化问题：
 
-\[
-\min_{u \in U} \mathbb{E}\left[\int_0^1 \left(\frac{1}{2}\left\|u(X_t^u, t)\right\|^2 + f(X_t^u, t)\right) dt + g(X_1^u)\right], \tag {12}
-\]
-\[
+$$
+\min_{u \in U} \mathbb{E}\left[\int_0^1 \left(\frac{1}{2}\left\|u(X_t^u, t)\right\|^2 + f(X_t^u, t)\right) dt + g(X_1^u)\right], \tag {12} \\
 \text{s.t. } d X_t^u = \left(b(X_t^u, t) + \sigma(t)u(X_t^u, t)\right) \,dt + \sigma(t)\,dB_t, \quad X_0^u \sim p_0
-\]
+$$
+
 随机最优控制 (SOC) 目标 (12) 可以从最终时间值递归分解。通常定义成本函数，它是从时间t的状态x开始的预期未来成本：
-\[
+$$
 J(u; x, t) := \mathbb{E}_{\mathbf{X} \sim p^u} \left[ \int_t^1 \left( \frac{1}{2} \left\| u(X_s, s) \right\|^2 + f(X_s, s) \right) ds + g(X_1) \mid X_t = x \right].
-\]
+$$
 价值函数是成本函数的最优值:
 \[
 V(x,t) := \min_{u \in \mathcal{U}} J(u; x,t) = J(u^*; x,t),
 \]
 $u^*$为最优控制，价值函数也可以用无控制基础过程$p^{base}$表示:
-\[
+$$
 V(x, t) = -\log \mathbb{E}_{\mathbf{X} \sim p^{\text{base}}} \left[ \exp\left( - \int_t^1 f(\mathbf{X}_s, s)\mathrm{d}s - g(\mathbf{X}_1) \right) \middle| \mathbf{X}_t = x \right].
-\]
+$$
 HJB方程揭示最优控制与价值函数梯度之间的关系如下:
 \[
 u^*(x, t) = -\sigma(t)^\top \nabla_x V(x, t) = -\sigma(t)^\top \nabla_x J(u^*, x, t).
 \]
 伴随匹配方法定义伴随状态adjoint state：
-\[
+$$
 a(t; \mathbf{X}, u) := \nabla_{X_t} \left( \int_t^1 \left( \frac{1}{2} \|u(X_{t'}, t')\|^2 + f(X_{t'}, t') \right) \, dt' + g(X_1) \right), \\
 \text{where } \mathbf{X} \text{ solves } dX_t = \left( b(X_t, t) + \sigma(t)u(X_t, t) \right) \, dt + \sigma(t)\, dB_t.
-\]
+$$
+
+伴随状态adjoint state 满足如下方程:
+$$
+\begin{align*}
+\frac{d}{dt} a(t; \mathbf{X}, u) &= - \left[ a(t; \mathbf{X}, u)^T \left( \nabla_{X_t} \left( b(X_t, t) + \sigma(t)u(X_t, t) \right) \right) + \nabla_{X_t} \left( f(X_t, t) + \frac{1}{2} \|u(X_t, t)\|^2 \right) \right],  \tag {30} \\
+a(1; \mathbf{X}, u) &= \nabla g(X_1)  \tag {31}
+\end{align*}
+$$
 
 \[
 u^*(x,t) = \mathbb{E}_{\mathbf{X} \sim p^*} \left[ -\sigma(t)^\top a(t; \mathbf{X}, u^*) \middle| X_t = x \right].
