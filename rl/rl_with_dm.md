@@ -277,13 +277,10 @@ Flow-SDE采样更新公式如下：
 
 $$
 \begin{align*}
-  
-
 x_{t-\Delta t} &= x_t - \left[ \hat{v}_\theta(x_t, t) + \frac{\sigma_t^2}{2t} \left( x_t + (1 - t)\hat{v}_\theta(x_t, t) \right) \right] \Delta t + \sigma_t \sqrt{\Delta t} \epsilon \\
 &= x_t - \hat{v}_\theta(x_t, t) \Delta t - \frac{\sigma_t^2 \Delta t}{2t} \hat{x}_1 + \sigma_t \sqrt{\Delta t} \epsilon \quad // \hat{x}_1 = x_t + (1-t)\hat{v}_\theta(x_t, t)) \\
 &= (1-t)\hat{x}_0 + t\hat{x}_1 - (\hat{x}_1 - \hat{x}_0) \Delta t - \frac{\sigma_t^2 \Delta t}{2t} \hat{x}_1 + \sigma_t \sqrt{\Delta t} \epsilon \quad //公式8\\
-&= (1-t + \Delta t) \hat{x}_0 + \left( t - \Delta t - \frac{\sigma_t^2 \Delta t}{2t} \right) \hat{x}_1 + \sigma_t \sqrt{\Delta t} \epsilon \\
-
+&= (1-t + \Delta t) \hat{x}_0 + \left( t - \Delta t - \frac{\sigma_t^2 \Delta t}{2t} \right) \hat{x}_1 + \sigma_t \sqrt{\Delta t} \epsilon 
 \end{align*}
 $$
 
@@ -346,23 +343,136 @@ $$\log p_\theta (\boldsymbol{x}_{t-1}^i |\boldsymbol{x}_t^i) = -\|\boldsymbol{x}
 
 ![](../images/rl_flow_cps_fig3.jpg)
 
+
+
 ## CFGRL
  [Diffusion Guidance Is a Controllable Policy Improvement Operator](https://arxiv.org/pdf/2505.23458)
+  pi0.6使用的方法跟本文相似
 
+\[
+J(\pi_\theta) = \mathbb{E}_{\tau \sim p(\tau | \pi_\theta)} \sum_t \gamma^t r(s_t, a_t),
+\]
 
+\[
+\mathbb{E}_{(s,a) \sim p_\pi(s,a)}[\mathbf{A}_{\hat{\pi}}(s,a)] \geq 0,
+\]
 
-### 引理1
+\[
+\tilde{J}(\pi) = \mathbb{E}_{s \sim p_{\hat{\pi}}(s)}[\mathbb{E}_{a \sim \pi(a|s)}[A_{\hat{\pi}}(s, a)]].
+\]
 
-### 引理2
+\[
+J(\pi_\theta) = \mathbb{E}_{\tau \sim p(\tau | \pi_\theta)} \left[ \sum_t \gamma^t r(s_t, a_t) \right] - \beta \mathbb{E}_{s \sim p_\pi(s)} \left[ D_{KL}(\pi_\theta(a | s) \| \hat{\pi}(a | s)) \right]
+\]
 
-### 引理3
+\[
+\pi(a | s) \propto \hat{\pi}(a | s) f(A(s, a)).
+\]
 
-### 定理1
+\[
+\pi(a \mid s) \propto \hat{\pi}(a \mid s) \exp(A(s, a))^{1/\beta}.
+\]
 
-### 定理2
+\[
+p(o \mid s, a) = f(A(s, a))/Z(s)
+\]
 
-## FPO
+\[
+\pi(a | s) \propto \hat{\pi}(a | s) p(o | s, a).
+\]
 
+\[
+\nabla_a \log \pi(a | s) = \nabla_a \log \hat{\pi}(a | s) + \nabla_a \log p(o | s, a).
+\]
 
+\[
+\nabla_a \log \pi(a \mid s) = \nabla_a \log \hat{\pi}(a \mid s) + (\nabla_a \log \hat{\pi}(a \mid s, o) - \nabla_a \log \hat{\pi}(a \mid s)).
+\]
 
-参考:[](https://arxiv.org/pdf/2107.07599)
+\[
+\nabla_a \log \hat{\pi}(a | s) + w (\nabla_a \log \hat{\pi}(a | s, o) - \nabla_a \log \hat{\pi}(a | s))
+\]
+
+\[
+\pi(a \mid s) \propto \hat{\pi}(a \mid s) p(o \mid s, a)^w, \text{ and equivalently } \hat{\pi}(a \mid s) f(A(s, a))^w.
+\]
+
+\[
+\mathcal{L}(\theta) = \mathbb{E}_{s,a \sim D} \left[ \left\| v_\theta(a_t, t, s, o) - (a - a_0) \right\|^2 \right] \quad \text{where} \quad a_t = (1 - t)a_0 + ta
+\]
+
+\[
+J(\pi) = \mathbb{E}_{\tau \sim p(\tau|\pi), g \sim p(g)} \left[ \sum_{t} \gamma^t \delta_g(s_t) \right],
+\]
+
+\[
+J_{GCBC}(\theta) = \mathbb{E}_{(s_t, a_t) \sim \mathcal{D}, \Delta \sim \text{Geom}(1 - \gamma)}[\log \pi_\theta (a_t \mid s_t, s_{t+\Delta})],
+\]
+
+第$i$步后被采样的概率为  $\gamma^{i-1}(1-\gamma)$
+
+$$
+\begin{align*}
+\pi(a \vert s, g) &= p_{data}(a \vert s,g) \\
+&= \frac {p_{data}(a \vert s)p_{data}(g \vert s,a)} {p_{data}(g \vert s)} \quad //贝叶斯 \\
+&=\frac{\hat{\pi}(a \mid s)p^\gamma(g \mid s, a)}{p^\gamma(g \mid s)} 
+\end{align*}
+$$
+
+\[
+\pi(a \mid s, g) = \frac{\hat{\pi}(a \mid s)p^\gamma(g \mid s, a)}{p^\gamma(g \mid s)} \propto \hat{\pi}(a \mid s) Q_{\hat{\pi}}(s, a, g),
+\]
+
+\[
+\nabla_a \log \hat{\pi} (a \mid s) + w (\nabla_a \log \pi (a \mid s, g) - \nabla_a \log \hat{\pi} (a \mid s)).
+\]
+
+## Adjoint Matching
+
+[Adjoint Matching: Fine-tuning Flow and Diffusion Generative Models with Memoryless Stochastic Optimal Control](http://arxiv.org/abs/2409.08861)
+
+随机最优控制考虑关于随机微分方程的一般优化问题：
+
+\[
+\min_{u \in U} \mathbb{E}\left[\int_0^1 \left(\frac{1}{2}\left\|u(X_t^u, t)\right\|^2 + f(X_t^u, t)\right) dt + g(X_1^u)\right], \tag {12}
+\]
+\[
+\text{s.t. } d X_t^u = \left(b(X_t^u, t) + \sigma(t)u(X_t^u, t)\right) \,dt + \sigma(t)\,dB_t, \quad X_0^u \sim p_0
+\]
+随机最优控制 (SOC) 目标 (12) 可以从最终时间值递归分解。通常定义成本函数，它是从时间t的状态x开始的预期未来成本：
+\[
+J(u; x, t) := \mathbb{E}_{\mathbf{X} \sim p^u} \left[ \int_t^1 \left( \frac{1}{2} \left\| u(X_s, s) \right\|^2 + f(X_s, s) \right) ds + g(X_1) \mid X_t = x \right].
+\]
+价值函数是成本函数的最优值:
+\[
+V(x,t) := \min_{u \in \mathcal{U}} J(u; x,t) = J(u^*; x,t),
+\]
+$u^*$为最优控制，价值函数也可以用无控制基础过程$p^{base}$表示:
+\[
+V(x, t) = -\log \mathbb{E}_{\mathbf{X} \sim p^{\text{base}}} \left[ \exp\left( - \int_t^1 f(\mathbf{X}_s, s)\mathrm{d}s - g(\mathbf{X}_1) \right) \middle| \mathbf{X}_t = x \right].
+\]
+HJB方程揭示最优控制与价值函数梯度之间的关系如下:
+\[
+u^*(x, t) = -\sigma(t)^\top \nabla_x V(x, t) = -\sigma(t)^\top \nabla_x J(u^*, x, t).
+\]
+伴随匹配方法定义伴随状态adjoint state：
+\[
+a(t; \mathbf{X}, u) := \nabla_{X_t} \left( \int_t^1 \left( \frac{1}{2} \|u(X_{t'}, t')\|^2 + f(X_{t'}, t') \right) \, dt' + g(X_1) \right), \\
+\text{where } \mathbf{X} \text{ solves } dX_t = \left( b(X_t, t) + \sigma(t)u(X_t, t) \right) \, dt + \sigma(t)\, dB_t.
+\]
+
+\[
+u^*(x,t) = \mathbb{E}_{\mathbf{X} \sim p^*} \left[ -\sigma(t)^\top a(t; \mathbf{X}, u^*) \middle| X_t = x \right].
+\]
+
+\[
+\mathbb{E}_{\mathbf{X} \sim p^*} \left[ u^*(x, t)^\mathsf{T} \nabla_x u^*(x, t) + a(t; \mathbf{X}, u^*)^\mathsf{T} \sigma(t) \nabla_x u^*(x, t) \mid \mathbf{X}_t = x \right] = 0.
+\]
+
+\[
+\begin{align*}
+\mathcal{L}_{\text{Adj-Match}}(u; \mathbf{X}) &:= \frac{1}{2} \int_0^1 \|u(X_t, t) + \sigma(t)^\top \tilde{a}(t; \mathbf{X})\|^2 dt, \quad \mathbf{X} \sim p^{\bar{u}}, \quad \bar{u} = \text{stopgrad}(u), \\
+\text{where } \frac{d}{dt} \tilde{a}(t; \mathbf{X}) &= -(\tilde{a}(t; \mathbf{X})^\top \nabla_x b(X_t, t) + \nabla_x f(X_t, t)), \\
+\tilde{a}(1; \mathbf{X}) &= \nabla_x g(X_1).
+\end{align*}
+\]
