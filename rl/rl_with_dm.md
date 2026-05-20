@@ -477,11 +477,14 @@ a(1; \mathbf{X}, u) &= \nabla g(X_1)  \tag {31}
 $$
 
 ### Adjoint Matching
-  可以直接回归到目标向量场  $-\sigma(t)^T \nabla J(u; x, t)$，其中 $u$是当前控制，这产生一个期望值等于连续伴随方法的梯度,伴随匹配目标定义如下:。
+  可以直接回归到目标向量场  $-\sigma(t)^T \nabla J(u; x, t)$，其中 $u$是当前控制，这产生一个期望值等于连续伴随方法的梯度,伴随匹配目标定义如下:
+
 $$
 L_\text{Basic-Adj-Match}(\mathbf{u}; \mathbf{X}) := \frac{1}{2} \int_0^1 \left\| u(\mathbf{X}_t, t) + \sigma(t)^\top \mathbf{a}(t; \mathbf{X}, \bar{\mathbf{u}}) \right\|^2 \,dt, \quad \mathbf{X} \sim p^{\bar{\mathbf{u}}}, \quad \bar{\mathbf{u}} = \text{stopgrad}(\mathbf{u}) \tag {32}
 $$
+
 基础伴随匹配目标（basic Adjoint Matching objective）未产生随机最优控制（stochastic optimal control）的新算法，它产生的梯度与连续伴随方法（continuous adjoint method）相同。但它提供了推导一个更简洁的精简目标函数（simpler leaner objective function）途径。当$u^*$为最优控制时,根据HJB方程有:
+
 $$
 \begin{align*}
 u^*(x,t) &=-\sigma(t)^\top \nabla_x J(u^*, x, t) \\ &= \mathbb{E}_{\mathbf{X} \sim p^*} \left[ -\sigma(t)^\top a(t; \mathbf{X}, u^*) \middle| X_t = x \right]. \tag {35}
@@ -494,7 +497,7 @@ $$
 \mathbb{E}_{\mathbf{X} \sim p^*} \left[ u^*(x, t)^\mathsf{T} \nabla_x u^*(x, t) + a(t; \mathbf{X}, u^*)^\mathsf{T} \sigma(t) \nabla_x u^*(x, t) \mid \mathbf{X}_t = x \right] = 0. \tag {36}
 $$
 
-注意到式(36)中期望内的项出现在式(30)的伴随微分方程中，而我们已经证明该方程在最优解时期望为零。因此，提出了一个删除了式(36)中项的精简伴随状态(lean adjoint state) $\tilde{a}$的定义。将此精简伴随状态代入最小二乘目标函数(32)，得到最终提出的伴随匹配目标：
+注意到式（36）中期望内的项出现在式（30）的伴随微分方程中，而我们已经证明该方程在最优解时期望为零。因此，提出了一个删除了式（36）中项的精简伴随状态（lean adjoint state） $\tilde{a}$的定义。将此精简伴随状态代入最小二乘目标函数（32），得到最终提出的伴随匹配目标：
 
 $$
 \begin{align*}
@@ -504,4 +507,4 @@ $$
 \end{align*}
 $$
 
- 总结:与Adjoint method相比，Adjoint Matching 在期望上的梯度与 continuous adjoint 不同。这是因为 lean adjoint state 不再与 cost functional 的梯度相关，即 (29) 不再成立，除非在 $u = u^*$ 的最优解处。在最优解处，由于 Adjoint Matching 移除了期望为零的项，它可能比 continuous adjoint method 表现出更好的收敛性和更低的方差。此外，lean adjoint state (38) 的计算也因为移除了额外项（不再需要 control 的 Jacobian ∇xu）而显示出更小的计算成本。
+ 总结:与Adjoint method相比，Adjoint Matching 在期望上的梯度与 continuous adjoint 不同。这是因为 lean adjoint state 不再与 cost functional 的梯度相关，即 (29) 不再成立，除非在 $u = u^*$ 的最优解处。在最优解处，由于 Adjoint Matching 移除了期望为零的项，它可能比 continuous adjoint method 表现出更好的收敛性和更低的方差。此外，lean adjoint state 的计算也因为移除了额外项（不再需要 control 的 Jacobian ∇xu）而显示出更小的计算成本。
