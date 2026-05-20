@@ -434,38 +434,85 @@ $$
 随机最优控制考虑关于随机微分方程的一般优化问题：
 
 $$
-\min_{u \in U} \mathbb{E}\left[\int_0^1 \left(\frac{1}{2}\left\|u(X_t^u, t)\right\|^2 + f(X_t^u, t)\right) dt + g(X_1^u)\right], \tag {12} \\
-\text{s.t. } d X_t^u = \left(b(X_t^u, t) + \sigma(t)u(X_t^u, t)\right) \,dt + \sigma(t)\,dB_t, \quad X_0^u \sim p_0
+\begin{align*}
+&\min_{u \in U} \mathbb{E}\left[\int_0^1 \left(\frac{1}{2}\left\|u(X_t^u, t)\right\|^2 + f(X_t^u, t)\right) dt + g(X_1^u)\right], \tag {12} \\
+&\text{s.t. } d X_t^u = \left(b(X_t^u, t) + \sigma(t)u(X_t^u, t)\right) \,dt + \sigma(t)\,dB_t, \quad X_0^u \sim p_0  \tag {13}
+\end{align*}
 $$
 
 随机最优控制 (SOC) 目标 (12) 可以从最终时间值递归分解。通常定义成本函数，它是从时间t的状态x开始的预期未来成本：
 
 $$
-J(u; x, t) := \mathbb{E}_{\mathbf{X} \sim p^u} \left[ \int_t^1 \left( \frac{1}{2} \left\| u(X_s, s) \right\|^2 + f(X_s, s) \right) ds + g(X_1) \mid X_t = x \right].
+J(u; x, t) := \mathbb{E}_{\mathbf{X} \sim p^u} \left[ \int_t^1 \left( \frac{1}{2} \left\| u(X_s, s) \right\|^2 + f(X_s, s) \right) ds + g(X_1) \mid X_t = x \right].   \tag {14}
 $$
 
 价值函数是成本函数的最优值:
 \[
-V(x,t) := \min_{u \in \mathcal{U}} J(u; x,t) = J(u^*; x,t),
+V(x,t) := \min_{u \in \mathcal{U}} J(u; x,t) = J(u^*; x,t),  \tag {15}
 \]
 
 $u^*$为最优控制，价值函数也可以用无控制基础过程$p^{base}$表示:
 
 $$
-V(x, t) = -\log \mathbb{E}_{\mathbf{X} \sim p^{\text{base}}} \left[ \exp\left( - \int_t^1 f(\mathbf{X}_s, s)\mathrm{d}s - g(\mathbf{X}_1) \right) \middle| \mathbf{X}_t = x \right].
+V(x, t) = -\log \mathbb{E}_{\mathbf{X} \sim p^{\text{base}}} \left[ \exp\left( - \int_t^1 f(\mathbf{X}_s, s)\mathrm{d}s - g(\mathbf{X}_1) \right) \middle| \mathbf{X}_t = x \right].   \tag {16}
 $$
 
 HJB方程揭示最优控制与价值函数梯度之间的关系如下:
 
 $$
-u^*(x, t) = -\sigma(t)^\top \nabla_x V(x, t) = -\sigma(t)^\top \nabla_x J(u^*, x, t).
+u^*(x, t) = -\sigma(t)^\top \nabla_x V(x, t) = -\sigma(t)^\top \nabla_x J(u^*, x, t). \tag {17}
 $$
 
-伴随匹配方法定义伴随状态adjoint state：
+### 初始值函数偏差问题
+  接下来说明为什么直接添加KL正则化并不能导出倾斜分布（1）;基于KL正则化的RL最优分布如下：
+
+$$
+p^*(\mathbf{X}|\mathbf{X}_0) \propto p^{\text{base}}(\mathbf{X}|\mathbf{X}_0) \exp\left(-\int_0^1 f(X_t, t)\,dt - g(X_1)\right).  \tag {20}
+$$
+
+首先注意到，(20) 式右侧 (RHS) 的归一化常数正好是$t=0$时的值函数，引用公式（16）的结果。
+
+$$
+\mathbb{E}_{\mathbf{X} \sim p^{\text{base}}(\mathbf{X}|\mathbf{X}_0)} \left[ \exp \left( - \int_0^1 f(\mathbf{X}_t, t) dt - g(\mathbf{X}_1) \right) \right] = \exp \left( - V(\mathbf{X}_0, 0) \right),  \tag {21}
+$$
+
+将公式(20)的RHS除以(21)并乘以$p_0(X_0)$，我们得到完整路径X上的归一化分布;
+
+$$
+p^*(\mathbf{X}) = p^{\text{base}}(\mathbf{X}) \exp \left( -\int_0^1 f(\mathbf{X}_t, t) dt - g(\mathbf{X}_1) + V(\mathbf{X}_0, 0) \right). \tag {22}
+$$
+
+令 f = 0 且 g = -r，也就没有转换成本，终端成本为负奖励，得到最优分布的表达式。
+
+\[
+p^*(X_0, X_1) = p^{\text{base}}(X_0, X_1) \exp(r(X_1) + V(X_0, 0)).  \tag {23}
+\]
+
+很不幸这不能推导出倾斜分布 (1)，因为最优分布中存在一个偏差，该偏差源于初始分布的值函数 $V(X_0, 0)$。也就是说，按照 (19) 的方式将 KL 正则化 (18) 直接添加到微调目标上，会导致微调后的分布 (22) 产生偏差，并且不等于倾斜分布 (1)。
+
+### 无记忆噪声调度
+
+**定义 1 (无记忆生成过程)**。形式为 (10)-(11) 的生成过程是无记忆的，当且仅当 X0 和 X1 相互独立，即
+$$
+p_{\text{base}}(X_0, X_1) = p_{\text{base}}(X_0)p_{\text{base}}(X_1)
+$$
+
+当生产过程是无记忆时，
+
+$$
+p^*(\mathbf{X}_1) = \int p^{\text{base}}(\mathbf{X}_0) p^{\text{base}}(\mathbf{X}_1) \exp(r(\mathbf{X}_1) + V(\mathbf{X}_0, 0)) \mathrm{d}\mathbf{X}_0 \propto p^{\text{base}}(\mathbf{X}_1) \exp(r(\mathbf{X}_1)). \tag {24}
+$$
+
+ 使用无记忆基模型求解 SOC 问题 (12)-(13)，将得到一个微调模型，该模型根据倾斜分布 (1) 生成样本 $p^*(X_1)$.
+
+**定理 1 (通用噪声调度采样微调方案)**。在生成过程 (10)-(11) 的框架内，为了允许使用任意噪声调度并仍根据倾斜分布 (1) 生成样本，使用 f = 0 和 g = −r 的微调问题 (12)-(13) 必须使用无记忆噪声调度 $\sigma(t) = \sqrt {2η_t}$ 进行。
+
+### 伴随方法
+ 首先定义伴随状态adjoint state：
 
 $$
 a(t; \mathbf{X}, u) := \nabla_{X_t} \left( \int_t^1 \left( \frac{1}{2} \|u(X_{t'}, t')\|^2 + f(X_{t'}, t') \right) \, dt' + g(X_1) \right), \\
-\text{where } \mathbf{X} \text{ solves } dX_t = \left( b(X_t, t) + \sigma(t)u(X_t, t) \right) \, dt + \sigma(t)\, dB_t.
+\text{where } \mathbf{X} \text{ solves } dX_t = \left( b(X_t, t) + \sigma(t)u(X_t, t) \right) \, dt + \sigma(t)\, dB_t. \tag {29}
 $$
 
 伴随状态adjoint state 满足如下方程:
