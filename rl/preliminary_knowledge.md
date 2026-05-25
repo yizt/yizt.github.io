@@ -67,7 +67,7 @@ $$
 
 
 ## HJB方程
-公式(4)是随机最优控制问题中Hamilton-Jacobi-Bellman (HJB)方程的一种常见形式。其推导基于动态规划原理和伊藤引理，下面给出详细步骤。
+ 随机最优控制问题中Hamilton-Jacobi-Bellman (HJB)方程，其推导基于动态规划原理和伊藤引理，下面给出详细步骤。
 
 ### 1. 问题设定
 考虑如下随机控制系统：
@@ -75,9 +75,11 @@ $$
 dX_s = \bigl(b(X_s,s) + \sigma(X_s,s) u_s\bigr) ds + \sigma(X_s,s) dW_s, \quad s \in [t,T],
 \]
 初始条件 \(X_t = x\)。其中 \(u_s\) 是控制变量，\(W_s\) 是标准布朗运动。代价函数为
-\[
+
+$$
 J(x,t;u) = \mathbb{E}\left[ \int_t^T \Bigl(f(X_s,s) + \frac{1}{2}\|u_s\|^2\Bigr) ds + g(X_T) \;\middle|\; X_t=x \right].
-\]
+$$
+
 目标是求最优控制 \(u^*\) 最小化代价，定义值函数
 \[
 V(x,t) = \inf_{u} J(x,t;u).
@@ -85,9 +87,10 @@ V(x,t) = \inf_{u} J(x,t;u).
 
 ### 2. 动态规划原理
 对于充分小的 \(\Delta t > 0\)，由动态规划原理有
-\[
+
+$$
 V(x,t) = \inf_{u} \mathbb{E}\left[ \int_t^{t+\Delta t} \Bigl(f+\frac{1}{2}\|u\|^2\Bigr) ds + V(X_{t+\Delta t}, t+\Delta t) \;\middle|\; X_t=x \right].
-\]
+$$
 
 ### 3. 伊藤引理与期望展开
 对 \(V(X_{t+\Delta t}, t+\Delta t)\) 应用伊藤引理（假设 \(V\) 足够光滑）：
@@ -95,16 +98,19 @@ V(x,t) = \inf_{u} \mathbb{E}\left[ \int_t^{t+\Delta t} \Bigl(f+\frac{1}{2}\|u\|^
 dV = \left( \partial_t V + (b+\sigma u)\cdot\nabla V + \frac{1}{2}\operatorname{tr}\bigl(\sigma\sigma^\top \nabla^2 V\bigr) \right) dt + (\sigma^\top \nabla V)\cdot dW.
 \]
 在区间 \([t, t+\Delta t]\) 上积分并取条件期望（注意布朗运动项期望为零）：
-\[
+
+$$
 \mathbb{E}[V(X_{t+\Delta t}, t+\Delta t) \mid X_t=x] = V(x,t) + \mathbb{E}\left[ \int_t^{t+\Delta t} \left( \partial_t V + (b+\sigma u)\cdot\nabla V + \frac{1}{2}\operatorname{tr}(\sigma\sigma^\top \nabla^2 V) \right) ds \mid X_t=x \right] + o(\Delta t).
-\]
+$$
+
 代入动态规划方程，两边消去 \(V(x,t)\)，并除以 \(\Delta t\) 令 \(\Delta t\to 0\)，得到：
-\[
+
+$$
 0 = \inf_u \left\{ \partial_t V + (b+\sigma u)\cdot\nabla V + \frac{1}{2}\operatorname{tr}(\sigma\sigma^\top \nabla^2 V) + f + \frac{1}{2}\|u\|^2 \right\}.
-\]
+$$
 
 ### 4. 极小化处理
-对括号内关于 \(u\) 求极小值。由于 \(\|u\|^2 + 2u^\top (\sigma^\top \nabla V) = \|u + \sigma^\top \nabla V\|^2 - \|\sigma^\top \nabla V\|^2\)，极小化等价于令 \(u = -\sigma^\top \nabla V\)，此时极小值为
+对括号内关于 \(u\) 求极小值。由于 $\|u\|^2 + 2u^\top (\sigma^\top \nabla V) = \|u + \sigma^\top \nabla V\|^2 - \|\sigma^\top \nabla V\|^2$，极小化等价于令 $u = -\sigma^\top \nabla V$，此时极小值为
 \[
 \partial_t V + b\cdot\nabla V + \frac{1}{2}\operatorname{tr}(\sigma\sigma^\top \nabla^2 V) + f - \frac{1}{2}\|\sigma^\top \nabla V\|^2 = 0.
 \]
