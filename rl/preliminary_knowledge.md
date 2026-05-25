@@ -67,7 +67,15 @@ $$
 
 
 ## HJB方程
- 随机最优控制问题中Hamilton-Jacobi-Bellman (HJB)方程，其推导基于动态规划原理和伊藤引理，下面给出详细步骤。
+$$
+\begin{equation*}
+\begin{gathered}
+(\partial_t + L)V(x, t) - \frac{1}{2}\left\|(\sigma^\top \nabla V)(x, t)\right\|^2 + f(x, t) = 0, \tag 4 \\ 
+V(x, T) = g(x).
+\end{gathered}
+\end{equation*}
+$$
+公式(4)是随机最优控制问题中Hamilton-Jacobi-Bellman (HJB)方程的一种常见形式。其推导基于动态规划原理和伊藤引理，下面给出详细步骤。
 
 ### 1. 问题设定
 考虑如下随机控制系统：
